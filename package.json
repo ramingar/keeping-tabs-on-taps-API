@@ -1,0 +1,11 @@
+{
+  "name": "beer-counter",
+  "version": "0.1.0",
+  "description": "An awesome counter for your beers debt",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rafael Minguet García <rminguet@gmail.com>",
+  "license": "MIT"
+}
