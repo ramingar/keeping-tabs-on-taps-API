@@ -1,4 +1,7 @@
-export default {
-    "port": 3000,
-    "bodyLimit": "300kb"
-}
+import configProd from './production';
+import configDev from './development';
+
+export {
+    configProd,
+    configDev
+};

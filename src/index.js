@@ -2,9 +2,10 @@ import express from 'express';
 import https from 'https';
 import bodyParser from 'body-parser';
 import fs from 'fs';
-import config from './config';
+import {configProd, configDev} from './config';
 
 const app = express();
+const config = app.get('env') === 'production' ? configProd : configDev;
 
 const httpsOptions = {
     key: fs.readFileSync(__dirname + '/../key.pem'),
