@@ -2,7 +2,9 @@ import express from 'express';
 import https from 'https';
 import bodyParser from 'body-parser';
 import fs from 'fs';
+
 import {configProd, configDev} from './config';
+import routes from './routes';
 
 const app = express();
 const config = app.get('env') === 'production' ? configProd : configDev;
@@ -25,10 +27,7 @@ app.use(bodyParser.urlencoded({
 
 // routes ------------------------------------------
 
-app.get('/', (req, res) => {
-    res.status(200).json({message: 'Server up!!'});
-});
-
+app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
