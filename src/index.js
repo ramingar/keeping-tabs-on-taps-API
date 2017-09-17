@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import fs from 'fs';
 
 import {configProd, configDev} from './config';
+import db from './db';
 import routes from './routes';
 
 const app = express();
@@ -27,7 +28,9 @@ app.use(bodyParser.urlencoded({
 
 // routes ------------------------------------------
 
-app.use('/', routes);
+db(config, (db) => {
+    app.use('/', routes(config, db));
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
