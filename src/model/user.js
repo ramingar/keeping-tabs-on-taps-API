@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import {Schema} from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 
-const UserSchema = new Schema({
+const UserSchema = Schema({
     name: {
         type: String
     },
