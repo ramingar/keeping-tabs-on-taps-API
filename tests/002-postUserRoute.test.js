@@ -67,7 +67,6 @@ test('-------- Controller: POST /user (409 - Conflict - The email is already reg
 test('-------- Controller: POST /user', (assert) => {
     const url = '/user';
     const message = 'Status must be 201 (created) and response must be void';
-    const responsePayloadExpected = {};
     const statusCodeExpected = 201;
 
     const user = {
@@ -82,7 +81,12 @@ test('-------- Controller: POST /user', (assert) => {
         .expect(statusCodeExpected)
         .then(
             (res) => {
-                assert.deepEqual(res.body, responsePayloadExpected, message);
+                const {name, email} = res.body;
+                assert.deepEqual(
+                    Object.assign({}, {name, email}),
+                    Object.assign({}, {name: user.name, email: user.email}),
+                    message
+                );
                 assert.end();
             }, (err) => {
                 assert.fail(err.message);

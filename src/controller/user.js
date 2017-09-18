@@ -13,9 +13,11 @@ const postUser = (req, res, config) => {
         }
 
         user.name = req.body.name;
-        user.save().then(() => {
+        user.save().then((response) => {
                 db.disconnect();
-                res.status(201).json({});
+                const {_id, name, email} = response;
+                const payload = Object.assign({}, {_id, name, email});
+                res.status(201).json(payload);
             }, (err) => {
                 db.disconnect();
                 res.status(err.status || 500).json(errorHandler(err));
