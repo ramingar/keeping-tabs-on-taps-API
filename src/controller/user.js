@@ -27,4 +27,18 @@ const postUser = (req, res, config) => {
 
 };
 
-export {postUser};
+const getUserById = (req, res, config) => {
+
+    db.connect(config);
+
+    User.findById(req.params.id).then((response) => {
+        db.disconnect();
+        res.status(200).json(response);
+    }, (err) => {
+        db.disconnect();
+        res.status(err.status || 500).json(errorHandler(err));
+    });
+
+};
+
+export {postUser, getUserById};
