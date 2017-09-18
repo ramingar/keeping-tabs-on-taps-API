@@ -5,15 +5,16 @@ import app from '../src/index';
 test('-------- Controller: GET /', (assert) => {
     const url = '/';
     const message = 'Status must be 200 and response must match with the expected simple message';
-    const expected = {message: 'Server up!!'};
+    const responsePayloadExpected = {message: 'Server up!!'};
+    const statusCodeExpected = 200;
 
     request(app)
         .get(url)
-        .expect(200)
+        .expect(statusCodeExpected)
         .expect('Content-Type', /json/)
         .then(
             (res) => {
-                assert.deepEqual(res.body, expected, message);
+                assert.deepEqual(res.body, responsePayloadExpected, message);
                 assert.end();
             }, (err) => {
                 assert.fail(err.message);
@@ -22,10 +23,36 @@ test('-------- Controller: GET /', (assert) => {
         );
 });
 
-test('-------- Controller: POST /user', (assert) => {
+test('-------- Controller: POST /user (400 - Bad request - No password)', (assert) => {
     const url = '/user';
-    const message = 'Status must be 201 (created) and response must be void';
-    const expected = {};
+    const message = 'Status must be 400 if pass is empty';
+    const statusCodeExpected = 400;
+
+    const user = {
+        name: 'TestUserWithANameVeryLong' + Date.now(),
+        email: 'mytestuser' + Date.now() + '@gmail.com',
+        pass: ''
+    };
+
+    request(app)
+        .post(url)
+        .send(user)
+        .expect(statusCodeExpected)
+        .then(
+            () => {
+                assert.pass(message);
+                assert.end();
+            }, (err) => {
+                assert.fail(err.message);
+                assert.end();
+            }
+        );
+});
+
+test('-------- Controller: POST /user (409 - Conflict - The email is already registered)', (assert) => {
+    const url = '/user';
+    const message = 'Status must be 409 if the email is already registered';
+    const statusCodeExpected = 409;
 
     const user = {
         name: 'TestUserWithANameVeryLong' + Date.now(),
@@ -36,10 +63,47 @@ test('-------- Controller: POST /user', (assert) => {
     request(app)
         .post(url)
         .send(user)
-        .expect(201)
+        .then(
+            () => {
+                request(app)
+                    .post(url)
+                    .send(user)
+                    .expect(statusCodeExpected)
+                    .then(
+                        () => {
+                            assert.pass(message);
+                            assert.end();
+                        }, (err) => {
+                            assert.fail(err.message);
+                            assert.end();
+                        }
+                    );
+            }, (err) => {
+                assert.fail(err.message);
+                assert.end();
+            }
+        );
+});
+
+test('-------- Controller: POST /user', (assert) => {
+    const url = '/user';
+    const message = 'Status must be 201 (created) and response must be void';
+    const responsePayloadExpected = {};
+    const statusCodeExpected = 201;
+
+    const user = {
+        name: 'TestUserWithANameVeryLong' + Date.now(),
+        email: 'mytestuser' + Date.now() + '@gmail.com',
+        pass: '1111'
+    };
+
+    request(app)
+        .post(url)
+        .send(user)
+        .expect(statusCodeExpected)
         .then(
             (res) => {
-                assert.deepEqual(res.body, expected, message);
+                assert.deepEqual(res.body, responsePayloadExpected, message);
                 assert.end();
             }, (err) => {
                 assert.fail(err.message);
