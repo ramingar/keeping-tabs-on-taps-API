@@ -8,6 +8,7 @@ const postUser = (req, res, config) => {
 
     User.register(User({email: req.body.email}), req.body.pass, function (err, user) {
         if (err) {
+            db.disconnect();
             return res.status(err.status || passportLocalMongooseErrorsCode[err.name] || 500).json(errorHandler(err));
         }
 
