@@ -1,8 +1,14 @@
 import mongoose from 'mongoose';
 
-export default (config, callback) => {
-    const db = mongoose.connect(config.mongodb, {
+const connect = (config) => {
+    mongoose.Promise = global.Promise;
+    mongoose.connect(config.mongodb, {
         useMongoClient: true
     });
-    callback(db);
-}
+};
+
+const disconnect = () => {
+    mongoose.disconnect();
+};
+
+export default {connect, disconnect};
