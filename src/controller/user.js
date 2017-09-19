@@ -1,5 +1,8 @@
+import passport from 'passport';
+
 import db from '../db';
 import User from '../model/user';
+import {generateAccessToken, respond} from '../middleware/auth';
 import {errorHandler, passportLocalMongooseErrorsCode} from '../utils/errors';
 
 const postUser = (req, res, config) => {
@@ -27,6 +30,18 @@ const postUser = (req, res, config) => {
 
 };
 
+const login = (req, res, config) => {
+
+    db.connect(config);
+
+    passport.authenticate('local', {session: false, scope: []})(req, res, () => {
+        generateAccessToken(req, res, () => {
+            db.disconnect();
+            respond(req, res);
+        });
+    });
+};
+
 const getUserById = (req, res, config) => {
 
     db.connect(config);
@@ -41,4 +56,4 @@ const getUserById = (req, res, config) => {
 
 };
 
-export {postUser, getUserById};
+export {login, postUser, getUserById};
