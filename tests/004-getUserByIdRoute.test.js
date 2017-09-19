@@ -4,7 +4,7 @@ import app from '../src/index';
 
 test('-------- Controller: GET /user/:id', (assert) => {
     const url = '/user';
-    const messageExpectedStatusCode = 'Status must be 200 when you are getting an existing user';
+    const messageExpectedStatusCode = 'Status must be 200 when you are retrieving an existing user';
     const messageExpectedName = 'The name must match with the expected name';
     const messageExpectedEmail = 'The email must match with the expected email';
     const statusCodeExpected = 200;
