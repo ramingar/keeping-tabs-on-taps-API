@@ -1,6 +1,9 @@
+import passport from 'passport';
+
 import db from '../db';
 import User from '../model/user';
-import {errorHandler, passportLocalMongooseErrorsCode} from '../utils/errors';
+import {generateAccessToken, respond} from '../middleware/auth';
+import {errorHandler, passportLocalMongooseErrorsCode, mongooseErrorsCode} from '../utils/errors';
 
 const postUser = (req, res, config) => {
 
@@ -13,9 +16,11 @@ const postUser = (req, res, config) => {
         }
 
         user.name = req.body.name;
-        user.save().then(() => {
+        user.save().then((response) => {
                 db.disconnect();
-                res.status(201).json({});
+                const {_id, name, email} = response;
+                const payload = Object.assign({}, {_id, name, email});
+                res.status(201).json(payload);
             }, (err) => {
                 db.disconnect();
                 res.status(err.status || 500).json(errorHandler(err));
@@ -25,4 +30,30 @@ const postUser = (req, res, config) => {
 
 };
 
-export {postUser};
+const login = (req, res, config) => {
+
+    db.connect(config);
+
+    passport.authenticate('local', {session: false, scope: []})(req, res, () => {
+        generateAccessToken(req, res, () => {
+            db.disconnect();
+            respond(req, res);
+        });
+    });
+};
+
+const getUserById = (req, res, config) => {
+
+    db.connect(config);
+
+    User.findById(req.params.id).then((response) => {
+        db.disconnect();
+        res.status(200).json(response);
+    }, (err) => {
+        db.disconnect();
+        res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
+    });
+
+};
+
+export {login, postUser, getUserById};
