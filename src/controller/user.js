@@ -3,7 +3,7 @@ import passport from 'passport';
 import db from '../db';
 import User from '../model/user';
 import {generateAccessToken, respond} from '../middleware/auth';
-import {errorHandler, passportLocalMongooseErrorsCode} from '../utils/errors';
+import {errorHandler, passportLocalMongooseErrorsCode, mongooseErrorsCode} from '../utils/errors';
 
 const postUser = (req, res, config) => {
 
@@ -51,7 +51,7 @@ const getUserById = (req, res, config) => {
         res.status(200).json(response);
     }, (err) => {
         db.disconnect();
-        res.status(err.status || 500).json(errorHandler(err));
+        res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
     });
 
 };

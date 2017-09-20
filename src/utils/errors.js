@@ -30,4 +30,8 @@ const passportLocalMongooseErrorsCode = {
     UserExistsError: 409
 };
 
-export {errorHandler, passportLocalMongooseErrorsCode};
+const mongooseErrorsCode = {
+    CastError: 404  // findById() returns no values
+};
+
+export {errorHandler, passportLocalMongooseErrorsCode, mongooseErrorsCode};
