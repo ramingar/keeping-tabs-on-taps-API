@@ -21,46 +21,40 @@ test('-------- Controller: GET /user/:id', (assert) => {
     request(app)
         .post(urlUser)
         .send(user)
-        .then(
-            (res) => {
-                idUser = res.body._id;
-                request(app)
-                    .post(urlLogin)
-                    .send({email: user.email, pass: user.pass})
-                    .then(
-                        (res) => {
-                            request(app)
-                                .get(urlUser + '/' + idUser)
-                                .set('Authorization', 'Bearer ' + res.body.token)
-                                .expect(statusCodeExpected)
-                                .then(
-                                    (res) => {
-                                        assert.pass(messageExpectedStatusCode);
-                                        assert.equal(res.body.name, user.name, messageExpectedName);
-                                        assert.equal(res.body.email, user.email, messageExpectedEmail);
-                                        assert.end();
-                                    }, (err) => {
-                                        assert.fail(err.message);
-                                        assert.end();
-                                    }
-                                );
+        .then((res) => {
+            idUser = res.body._id;
+            request(app)
+                .post(urlLogin)
+                .send({email: user.email, pass: user.pass})
+                .then((res) => {
+                    request(app)
+                        .get(urlUser + '/' + idUser)
+                        .set('Authorization', 'Bearer ' + res.body.token)
+                        .expect(statusCodeExpected)
+                        .then((res) => {
+                            assert.pass(messageExpectedStatusCode);
+                            assert.equal(res.body.name, user.name, messageExpectedName);
+                            assert.equal(res.body.email, user.email, messageExpectedEmail);
+                            assert.end();
                         }, (err) => {
                             assert.fail(err.message);
                             assert.end();
-                        }
-                    );
-            }, (err) => {
-                assert.fail(err.message);
-                assert.end();
-            }
-        );
+                        });
+                }, (err) => {
+                    assert.fail(err.message);
+                    assert.end();
+                });
+        }, (err) => {
+            assert.fail(err.message);
+            assert.end();
+        });
 });
 
-test('-------- Controller: GET /user/:id (user doesn\'t exist)', (assert) => {
+test('-------- Controller: GET /user/:id (unauthorized access to the requested resource)', (assert) => {
     const urlUser = '/user';
     const urlLogin = '/login';
-    const messageExpectedStatusCode = 'StatusCode must be 404 when you want retrieve a not existing user';
-    const statusCodeExpected = 404;
+    const messageExpectedStatusCode = 'StatusCode must be 401 when you want retrieve info of other user different than you';
+    const statusCodeExpected = 401;
 
     const user = {
         name: 'TestUserWithANameVeryLong' + Date.now(),
@@ -68,42 +62,35 @@ test('-------- Controller: GET /user/:id (user doesn\'t exist)', (assert) => {
         pass: '1111'
     };
 
-    let idUser = null;
+    let idUser = '1d0f@n0th3rUs3r';
 
     request(app)
         .post(urlUser)
         .send(user)
-        .then(
-            (res) => {
-                idUser = res.body._id;
-                request(app)
-                    .post(urlLogin)
-                    .send({email: user.email, pass: user.pass})
-                    .then(
-                        (res) => {
-                            request(app)
-                                .get(urlUser + '/notExistingUser')
-                                .set('Authorization', 'Bearer ' + res.body.token)
-                                .expect(statusCodeExpected)
-                                .then(
-                                    (res) => {
-                                        assert.pass(messageExpectedStatusCode);
-                                        assert.end();
-                                    }, (err) => {
-                                        assert.fail(err.message);
-                                        assert.end();
-                                    }
-                                );
+        .then(() => {
+            request(app)
+                .post(urlLogin)
+                .send({email: user.email, pass: user.pass})
+                .then((res) => {
+                    request(app)
+                        .get(urlUser + '/' + idUser)
+                        .set('Authorization', 'Bearer ' + res.body.token)
+                        .expect(statusCodeExpected)
+                        .then(() => {
+                            assert.pass(messageExpectedStatusCode);
+                            assert.end();
                         }, (err) => {
                             assert.fail(err.message);
                             assert.end();
-                        }
-                    );
-            }, (err) => {
-                assert.fail(err.message);
-                assert.end();
-            }
-        );
+                        });
+                }, (err) => {
+                    assert.fail(err.message);
+                    assert.end();
+                });
+        }, (err) => {
+            assert.fail(err.message);
+            assert.end();
+        });
 });
 
 app.serverListening.close();

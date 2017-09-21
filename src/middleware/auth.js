@@ -3,6 +3,16 @@ import expressJwt from 'express-jwt';
 
 const authenticate = (config) => expressJwt({secret: config.jwtTokenSecret});
 
+const ownership = (req, res, config, next) => {
+    const payload = jwt.verify(req.header('Authorization').slice(7), config.jwtTokenSecret);
+
+    if (payload.id !== req.params.id) {
+        return res.status(401).json({"message": "Unauthorized: access to the requested resource is not authorized"});
+    }
+
+    next();
+};
+
 const generateAccessToken = (req, res, config, next) => {
 
     req.token = req.token || {};
@@ -20,6 +30,7 @@ const respond = (req, res) => {
 
 export {
     authenticate,
+    ownership,
     generateAccessToken,
     respond
 };
