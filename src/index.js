@@ -5,7 +5,7 @@ import fs from 'fs';
 import passport from 'passport';
 import {Strategy} from 'passport-local';
 
-import {configProd, configDev, configTest} from './config';
+import configuration from './config';
 import routes from './routes';
 import User from './model/user';
 import {errorHandler} from './utils/errors';
@@ -14,9 +14,7 @@ const app = express();
 
 // CONFIG ------------------------------------------------------------------------
 
-const config = app.get('env') === 'production' ?
-    configProd :
-    app.get('env') === 'test' ? configTest : configDev;
+const config = configuration(app);
 
 const httpsOptions = {
     key: fs.readFileSync(__dirname + '/../key.pem'),

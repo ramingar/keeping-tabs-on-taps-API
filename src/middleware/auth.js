@@ -1,15 +1,50 @@
 import jwt from 'jsonwebtoken';
 import expressJwt from 'express-jwt';
 
-const TOKENTIME = 60 * 60 * 24 * 30; // 30 days
-const SECRET = "My-S3cr3t-P@ssw0rd-F0r-JsonW3bT0kens";
+import db from '../db';
+import RevokedToken from '../model/revokedToken';
 
-const authenticate = expressJwt({secret: SECRET});
+const authenticate = (config) => expressJwt({secret: config.jwtTokenSecret});
 
-const generateAccessToken = (req, res, next) => {
+const isRevoked = (req, res, config, next) => {
+
+    db.connect(config);
+
+    RevokedToken.find({tokenId: req.header('Authorization').slice(7)}).then((revokedToken) => {
+        if (revokedToken.length > 0) {
+            db.disconnect();
+            return res.status(401).json({
+                "message": "The token has been revoked.",
+                "error": {
+                    "name": "UnauthorizedError",
+                    "code": "revoked_token",
+                    "status": 401
+                }
+            });
+        } else {
+            db.disconnect();
+            next();
+        }
+    }, () => {
+        db.disconnect();
+        next();
+    });
+};
+
+const ownership = (req, res, config, next) => {
+    const payload = jwt.verify(req.header('Authorization').slice(7), config.jwtTokenSecret);
+
+    if (payload.id !== req.params.id) {
+        return res.status(403).json({"message": "Forbidden: access to the requested resource is forbidden"});
+    }
+
+    next();
+};
+
+const generateAccessToken = (req, res, config, next) => {
 
     req.token = req.token || {};
-    req.token = jwt.sign({id: req.user.id}, SECRET, {expiresIn: TOKENTIME});
+    req.token = jwt.sign({id: req.user.id}, config.jwtTokenSecret, {expiresIn: config.jwtTokenTime});
 
     next();
 };
@@ -23,6 +58,8 @@ const respond = (req, res) => {
 
 export {
     authenticate,
+    isRevoked,
+    ownership,
     generateAccessToken,
     respond
 };
