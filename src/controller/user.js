@@ -2,6 +2,7 @@ import passport from 'passport';
 
 import db from '../db';
 import User from '../model/user';
+import RevokedToken from '../model/revokedToken';
 import {generateAccessToken, respond} from '../middleware/auth';
 import {errorHandler, passportLocalMongooseErrorsCode, mongooseErrorsCode} from '../utils/errors';
 
@@ -42,6 +43,28 @@ const login = (req, res, config) => {
     });
 };
 
+const logout = (req, res, config) => {
+
+    db.connect(config);
+
+    const revokedToken = RevokedToken();
+
+    revokedToken.tokenId = req.header('Authorization').slice(7);
+    revokedToken.userId = req.user.id;
+    revokedToken.date = Date.now();
+    revokedToken.expireAt = Date.now() + (config.jwtTokenTime * 1000);
+
+    revokedToken.save().then(() => {
+        db.disconnect();
+        req.logout();
+        res.status(204).json();
+    }, (err) => {
+        db.disconnect();
+        res.status(err.status || 500).json(errorHandler(err));
+    });
+
+};
+
 const getUserById = (req, res, config) => {
 
     db.connect(config);
@@ -56,4 +79,4 @@ const getUserById = (req, res, config) => {
 
 };
 
-export {login, postUser, getUserById};
+export {login, logout, postUser, getUserById};
