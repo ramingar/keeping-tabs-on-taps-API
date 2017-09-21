@@ -35,7 +35,7 @@ const login = (req, res, config) => {
     db.connect(config);
 
     passport.authenticate('local', {session: false, scope: []})(req, res, () => {
-        generateAccessToken(req, res, () => {
+        generateAccessToken(req, res, config, () => {
             db.disconnect();
             respond(req, res);
         });

@@ -9,7 +9,7 @@ export default (config) => {
     routes.get('/', (req, res) => index(req, res));
     routes.post('/login', (req, res) => login(req, res, config));
     routes.post('/user', (req, res) => postUser(req, res, config));
-    routes.get('/user/:id', authenticate, (req, res) => getUserById(req, res, config));
+    routes.get('/user/:id', authenticate(config), (req, res) => getUserById(req, res, config));
 
     return routes;
 };

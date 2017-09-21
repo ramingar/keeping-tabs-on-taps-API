@@ -1,15 +1,12 @@
 import jwt from 'jsonwebtoken';
 import expressJwt from 'express-jwt';
 
-const TOKENTIME = 60 * 60 * 24 * 30; // 30 days
-const SECRET = "My-S3cr3t-P@ssw0rd-F0r-JsonW3bT0kens";
+const authenticate = (config) => expressJwt({secret: config.jwtTokenSecret});
 
-const authenticate = expressJwt({secret: SECRET});
-
-const generateAccessToken = (req, res, next) => {
+const generateAccessToken = (req, res, config, next) => {
 
     req.token = req.token || {};
-    req.token = jwt.sign({id: req.user.id}, SECRET, {expiresIn: TOKENTIME});
+    req.token = jwt.sign({id: req.user.id}, config.jwtTokenSecret, {expiresIn: config.jwtTokenTime});
 
     next();
 };
