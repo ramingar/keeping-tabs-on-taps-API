@@ -50,11 +50,11 @@ test('-------- Controller: GET /user/:id', (assert) => {
         });
 });
 
-test('-------- Controller: GET /user/:id (unauthorized access to the requested resource)', (assert) => {
+test('-------- Controller: GET /user/:id (forbidden access to the requested resource)', (assert) => {
     const urlUser = '/user';
     const urlLogin = '/login';
-    const messageExpectedStatusCode = 'StatusCode must be 401 when you want retrieve info of other user different than you';
-    const statusCodeExpected = 401;
+    const messageExpectedStatusCode = 'StatusCode must be 403 when you want retrieve info of other user different than you';
+    const statusCodeExpected = 403;
 
     const user = {
         name: 'TestUserWithANameVeryLong' + Date.now(),

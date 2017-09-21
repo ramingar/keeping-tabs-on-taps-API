@@ -35,7 +35,7 @@ const ownership = (req, res, config, next) => {
     const payload = jwt.verify(req.header('Authorization').slice(7), config.jwtTokenSecret);
 
     if (payload.id !== req.params.id) {
-        return res.status(401).json({"message": "Unauthorized: access to the requested resource is not authorized"});
+        return res.status(403).json({"message": "Forbidden: access to the requested resource is forbidden"});
     }
 
     next();
