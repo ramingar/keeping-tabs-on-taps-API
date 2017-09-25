@@ -4,7 +4,7 @@ import expressJwt from 'express-jwt';
 import db from '../db';
 import RevokedToken from '../model/revokedToken';
 
-const authenticate = (config) => expressJwt({secret: config.jwtTokenSecret});
+const authenticate = (config) => expressJwt({secret: process.env.APP_JWT_TOKEN_SECRET || config.jwtTokenSecret});
 
 const isRevoked = (req, res, config, next) => {
 
@@ -32,7 +32,10 @@ const isRevoked = (req, res, config, next) => {
 };
 
 const ownership = (req, res, config, next) => {
-    const payload = jwt.verify(req.header('Authorization').slice(7), config.jwtTokenSecret);
+    const payload = jwt.verify(
+        req.header('Authorization').slice(7),
+        process.env.APP_JWT_TOKEN_SECRET || config.jwtTokenSecret
+    );
 
     if (payload.id !== req.params.id) {
         return res.status(403).json({"message": "Forbidden: access to the requested resource is forbidden"});
@@ -44,7 +47,11 @@ const ownership = (req, res, config, next) => {
 const generateAccessToken = (req, res, config, next) => {
 
     req.token = req.token || {};
-    req.token = jwt.sign({id: req.user.id}, config.jwtTokenSecret, {expiresIn: config.jwtTokenTime});
+    req.token = jwt.sign(
+        {id: req.user.id},
+        process.env.APP_JWT_TOKEN_SECRET || config.jwtTokenSecret,
+        {expiresIn: process.env.APP_JWT_TOKEN_TIME || config.jwtTokenTime}
+    );
 
     next();
 };

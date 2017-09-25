@@ -52,7 +52,7 @@ const logout = (req, res, config) => {
     revokedToken.tokenId = req.header('Authorization').slice(7);
     revokedToken.userId = req.user.id;
     revokedToken.date = Date.now();
-    revokedToken.expireAt = Date.now() + (config.jwtTokenTime * 1000);
+    revokedToken.expireAt = Date.now() + ((process.env.APP_JWT_TOKEN_TIME || config.jwtTokenTime) * 1000);
 
     revokedToken.save().then(() => {
         db.disconnect();

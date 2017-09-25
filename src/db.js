@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const connect = (config) => {
     mongoose.Promise = global.Promise;
-    mongoose.connect(config.mongodb, {
+    mongoose.connect(process.env.APP_MONGODB || config.mongodb, {
         useMongoClient: true
     });
 };
