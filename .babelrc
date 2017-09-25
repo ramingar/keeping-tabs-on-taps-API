@@ -5,6 +5,9 @@
     },
     "test": {
       "presets": ["env"]
+    },
+    "test_local": {
+      "presets": ["env"]
     }
   }
 }
