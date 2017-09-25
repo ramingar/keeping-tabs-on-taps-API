@@ -51,7 +51,7 @@ app.use(function (err, req, res, next) {
 
 // RUN SERVER -------------------------------------------------------------------
 
-if ('production' === app.get('env') && 'test' === app.get('env')) {
+if ('production' === app.get('env') || 'test' === app.get('env')) {
 
     // SSL termination is done on Heroku servers/load-balancers before the traffic gets to the application.
     // So in production, Heroku is in charge of HTTPS.
