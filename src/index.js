@@ -33,7 +33,7 @@ passport.deserializeUser(User.deserializeUser());
 // MIDDLEWARE -------------------------------------------------------------------
 
 app.use(bodyParser.json({
-    limit: config.bodyLimit
+    limit: process.env.APP_BODY_LIMIT || config.bodyLimit
 }));
 
 app.use(bodyParser.urlencoded({
@@ -56,8 +56,8 @@ app.use(function (err, req, res, next) {
 
 // RUN SERVER -------------------------------------------------------------------
 
-app.serverListening = https.createServer(httpsOptions, app).listen(config.port, () => {
-    console.log('Server listening on port ' + config.port);
+app.serverListening = https.createServer(httpsOptions, app).listen(process.env.PORT || config.port, () => {
+    console.log('Server listening on port ' + app.serverListening.address().port);
 });
 
 export default app;
