@@ -16,11 +16,6 @@ const app = express();
 
 const config = configuration(app);
 
-const httpsOptions = {
-    key: fs.readFileSync(__dirname + '/../key.pem'),
-    cert: fs.readFileSync(__dirname + '/../cert.pem')
-};
-
 // passport config
 const localStrategy = Object.create(Strategy.prototype);
 localStrategy.constructor({usernameField: 'email', passwordField: 'pass'}, User.authenticate());
@@ -56,8 +51,27 @@ app.use(function (err, req, res, next) {
 
 // RUN SERVER -------------------------------------------------------------------
 
-app.serverListening = https.createServer(httpsOptions, app).listen(process.env.PORT || config.port, () => {
-    console.log('Server listening on port ' + app.serverListening.address().port);
-});
+if ('production' === app.get('env')) {
+
+    // SSL termination is done on Heroku servers/load-balancers before the traffic gets to the application.
+    // So in production, Heroku is in charge of HTTPS.
+
+    app.serverListening = app.listen(process.env.PORT || config.port, () => {
+        console.log('Server listening on port ' + app.serverListening.address().port);
+    });
+
+} else {
+
+    // In other environment, we are in charge of managing HTTPS connections
+
+    const httpsOptions = {
+        key: fs.readFileSync(__dirname + '/../key.pem'),
+        cert: fs.readFileSync(__dirname + '/../cert.pem')
+    };
+
+    app.serverListening = https.createServer(httpsOptions, app).listen(process.env.PORT || config.port, () => {
+        console.log('Server listening on port ' + app.serverListening.address().port);
+    });
+}
 
 export default app;
