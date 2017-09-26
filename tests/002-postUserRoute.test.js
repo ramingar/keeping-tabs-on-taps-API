@@ -1,6 +1,6 @@
 import test from 'tape';
 import request from 'supertest';
-import app from '../src/index';
+import {app, server} from '../src/index';
 
 test('-------- Controller: POST /user (400 - Bad request - No password)', (assert) => {
     const url = '/user';
@@ -95,4 +95,4 @@ test('-------- Controller: POST /user', (assert) => {
         );
 });
 
-app.serverListening.close();
+server.close();

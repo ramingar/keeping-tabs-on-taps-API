@@ -1,6 +1,6 @@
 import test from 'tape';
 import request from 'supertest';
-import app from '../src/index';
+import {app, server} from '../src/index';
 
 test('-------- Controller: GET /user/:id', (assert) => {
     const urlUser = '/user';
@@ -93,4 +93,4 @@ test('-------- Controller: GET /user/:id (forbidden access to the requested reso
         });
 });
 
-app.serverListening.close();
+server.close();

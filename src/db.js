@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 
 const connect = (config) => {
     mongoose.Promise = global.Promise;
-    mongoose.connect(process.env.APP_MONGODB || config.mongodb, {
+    return mongoose.connect(process.env.APP_MONGODB || config.mongodb, {
         useMongoClient: true
-    });
+    }).then((db) => db);
 };
 
 const disconnect = () => {
