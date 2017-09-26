@@ -1,6 +1,6 @@
 import test from 'tape';
 import request from 'supertest';
-import app from '../src/index';
+import {app, server} from '../src/index';
 
 test('-------- Controller: POST /login', (assert) => {
     const urlLogin = '/login';
@@ -43,4 +43,4 @@ test('-------- Controller: POST /login', (assert) => {
         );
 });
 
-app.serverListening.close();
+server.close();

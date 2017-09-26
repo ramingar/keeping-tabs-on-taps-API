@@ -1,6 +1,6 @@
 import test from 'tape';
 import request from 'supertest';
-import app from '../src/index';
+import {app, server} from '../src/index';
 
 test('-------- Controller: GET /logout', (assert) => {
     const urlLogout = '/logout';
@@ -115,4 +115,4 @@ test('-------- Controller: GET /logout (using a revoked token)', (assert) => {
         });
 });
 
-app.serverListening.close();
+server.close();

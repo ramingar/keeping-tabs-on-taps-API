@@ -51,12 +51,14 @@ app.use(function (err, req, res, next) {
 
 // RUN SERVER -------------------------------------------------------------------
 
+let server = null;
+
 if ('production' === app.get('env') || 'test' === app.get('env')) {
 
     // SSL termination is done on Heroku servers/load-balancers before the traffic gets to the application.
     // So in production, Heroku is in charge of HTTPS.
 
-    app.serverListening = app.listen(process.env.PORT || config.port, () => {
+    server = app.listen(process.env.PORT || config.port, () => {
         const listeningPort = process.env.PORT || config.port;
         console.log('Server listening on port ' + listeningPort);
     });
@@ -70,10 +72,10 @@ if ('production' === app.get('env') || 'test' === app.get('env')) {
         cert: fs.readFileSync(__dirname + '/../cert.pem')
     };
 
-    app.serverListening = https.createServer(httpsOptions, app).listen(process.env.PORT || config.port, () => {
+    server = https.createServer(httpsOptions, app).listen(process.env.PORT || config.port, () => {
         const listeningPort = process.env.PORT || config.port;
         console.log('Server listening on port ' + listeningPort);
     });
 }
 
-export default app;
+export {app, server};
