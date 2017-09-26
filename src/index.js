@@ -57,7 +57,8 @@ if ('production' === app.get('env') || 'test' === app.get('env')) {
     // So in production, Heroku is in charge of HTTPS.
 
     app.serverListening = app.listen(process.env.PORT || config.port, () => {
-        console.log('Server listening on port ' + process.env.PORT || config.port);
+        const listeningPort = process.env.PORT || config.port;
+        console.log('Server listening on port ' + listeningPort);
     });
 
 } else {
@@ -70,7 +71,8 @@ if ('production' === app.get('env') || 'test' === app.get('env')) {
     };
 
     app.serverListening = https.createServer(httpsOptions, app).listen(process.env.PORT || config.port, () => {
-        console.log('Server listening on port ' + process.env.PORT || config.port);
+        const listeningPort = process.env.PORT || config.port;
+        console.log('Server listening on port ' + listeningPort);
     });
 }
 
