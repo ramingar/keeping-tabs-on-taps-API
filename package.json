@@ -8,7 +8,7 @@
     "prestart": "npm run -s build",
     "build": "./node_modules/.bin/babel src -s -D -d dist --presets env",
     "start": "NODE_ENV=production node ./dist/",
-    "test": "export BABEL_ENV=test && export NODE_ENV=test && ./node_modules/.bin/babel-tape-runner ./tests/*.test.js | ./node_modules/.bin/tap-spec",
+    "test": "export BABEL_ENV=test && export NODE_ENV=test && ./node_modules/.bin/babel-tape-runner ./tests/*.test.js",
     "test-local": "export BABEL_ENV=test_local && export NODE_ENV=test_local && ./node_modules/.bin/babel-tape-runner ./tests/*.test.js | ./node_modules/.bin/tap-spec"
   },
   "author": "Rafael Minguet García <rminguet@gmail.com>",
