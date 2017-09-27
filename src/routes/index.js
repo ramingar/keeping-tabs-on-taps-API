@@ -1,7 +1,7 @@
 import {Router} from 'express';
 import {index} from '../controller';
 import {login, logout, postUser, getUserById} from '../controller/user';
-import {postDebt} from "../controller/debt";
+import {postDebt, getDebt} from "../controller/debt";
 import {authenticate, getMe} from '../middleware/auth';
 import {ownership, isRevoked, creditorIsMe} from '../middleware/validations';
 
@@ -39,6 +39,13 @@ export default (config) => {
         (req, res, next) => ownership(req, res, config, next),
         (req, res, next) => creditorIsMe(req, res, next),
         (req, res) => postDebt(req, res)
+    );
+
+    routes.get('/user/:id/debt/:idDebt',
+        authenticate(config),
+        (req, res, next) => isRevoked(req, res, next),
+        (req, res, next) => ownership(req, res, config, next),
+        (req, res) => getDebt(req, res, config)
     );
 
     return routes;
