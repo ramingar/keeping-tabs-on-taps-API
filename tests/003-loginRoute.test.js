@@ -43,4 +43,3 @@ test('-------- Controller: POST /login', (assert) => {
         );
 });
 
-server.close();

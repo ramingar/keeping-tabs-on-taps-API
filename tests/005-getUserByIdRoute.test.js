@@ -92,5 +92,3 @@ test('-------- Controller: GET /user/:id (forbidden access to the requested reso
             assert.end();
         });
 });
-
-server.close();

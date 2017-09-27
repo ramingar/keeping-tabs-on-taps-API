@@ -95,4 +95,3 @@ test('-------- Controller: POST /user', (assert) => {
         );
 });
 
-server.close();

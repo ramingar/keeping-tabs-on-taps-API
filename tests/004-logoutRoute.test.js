@@ -114,5 +114,3 @@ test('-------- Controller: GET /logout (using a revoked token)', (assert) => {
             assert.end();
         });
 });
-
-server.close();

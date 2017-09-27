@@ -23,4 +23,3 @@ test('-------- Controller: GET /', (assert) => {
         );
 });
 
-server.close();

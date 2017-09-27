@@ -53,29 +53,34 @@ app.use(function (err, req, res, next) {
 
 let server = null;
 
-if ('production' === app.get('env') || 'test' === app.get('env')) {
+// To listen for connections only when our index.js file is called directly by node
+// and not when is required by our files.
+// See: https://puigcerber.com/2015/11/27/testing-express-apis-with-tape-and-supertest/
+if (require.main === module) {
+    if ('production' === app.get('env') || 'test' === app.get('env')) {
 
-    // SSL termination is done on Heroku servers/load-balancers before the traffic gets to the application.
-    // So in production, Heroku is in charge of HTTPS.
+        // SSL termination is done on Heroku servers/load-balancers before the traffic gets to the application.
+        // So in production, Heroku is in charge of HTTPS.
 
-    server = app.listen(process.env.PORT || config.port, () => {
-        const listeningPort = process.env.PORT || config.port;
-        console.log('Server listening on port ' + listeningPort);
-    });
+        server = app.listen(process.env.PORT || config.port, () => {
+            const listeningPort = process.env.PORT || config.port;
+            console.log('Server listening on port ' + listeningPort);
+        });
 
-} else {
+    } else {
 
-    // In other environment, we are in charge of managing HTTPS connections
+        // In other environment, we are in charge of managing HTTPS connections
 
-    const httpsOptions = {
-        key: fs.readFileSync(__dirname + '/../key.pem'),
-        cert: fs.readFileSync(__dirname + '/../cert.pem')
-    };
+        const httpsOptions = {
+            key: fs.readFileSync(__dirname + '/../key.pem'),
+            cert: fs.readFileSync(__dirname + '/../cert.pem')
+        };
 
-    server = https.createServer(httpsOptions, app).listen(process.env.PORT || config.port, () => {
-        const listeningPort = process.env.PORT || config.port;
-        console.log('Server listening on port ' + listeningPort);
-    });
+        server = https.createServer(httpsOptions, app).listen(process.env.PORT || config.port, () => {
+            const listeningPort = process.env.PORT || config.port;
+            console.log('Server listening on port ' + listeningPort);
+        });
+    }
 }
 
 export {app, server};

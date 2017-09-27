@@ -177,5 +177,3 @@ test('-------- Controller: POST /debt (403 - it is forbidden to create a debt fo
                 });
         });
 });
-
-server.close();
