@@ -1,6 +1,6 @@
 import test from 'tape';
 import request from 'supertest';
-import {app, server} from '../src/index';
+import {app} from '../src/index';
 
 test('-------- Controller: GET /user/:id', (assert) => {
     const urlUser = '/user';

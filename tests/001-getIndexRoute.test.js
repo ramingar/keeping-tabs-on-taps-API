@@ -1,6 +1,6 @@
 import test from 'tape';
 import request from 'supertest';
-import {app, server} from '../src/index';
+import {app} from '../src/index';
 
 test('-------- Controller: GET /', (assert) => {
     const url = '/';
@@ -22,4 +22,3 @@ test('-------- Controller: GET /', (assert) => {
             }
         );
 });
-
