@@ -4,7 +4,9 @@ const connect = (config) => {
     mongoose.Promise = global.Promise;
     return mongoose.connect(process.env.APP_MONGODB || config.mongodb, {
         useMongoClient: true
-    }).then((db) => db);
+    }).then(db => db, err => {
+        console.log(err)
+    });
 };
 
 const disconnect = () => {
