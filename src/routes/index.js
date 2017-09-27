@@ -2,7 +2,7 @@ import {Router} from 'express';
 import {index} from '../controller';
 import {login, logout, postUser, getUserById} from '../controller/user';
 import {postDebt} from "../controller/debt";
-import {authenticate} from '../middleware/auth';
+import {authenticate, getMe} from '../middleware/auth';
 import {ownership, isRevoked, creditorIsMe} from '../middleware/validations';
 
 export default (config) => {
@@ -11,6 +11,12 @@ export default (config) => {
     routes.get('/', (req, res) => index(req, res));
 
     routes.post('/login', (req, res) => login(req, res, config));
+
+    routes.get('/me',
+        authenticate(config),
+        (req, res, next) => isRevoked(req, res, next),
+        (req, res) => getMe(req, res, config)
+    );
 
     routes.get('/logout',
         authenticate(config),

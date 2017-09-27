@@ -15,6 +15,17 @@ const generateAccessToken = (req, res, config, next) => {
     next();
 };
 
+const getMe = (req, res, config) => {
+    const payload = jwt.verify(
+        req.header('Authorization').slice(7),
+        process.env.APP_JWT_TOKEN_SECRET || config.jwtTokenSecret
+    );
+
+    res.status(200).json({
+        user: payload.id
+    });
+};
+
 const respond = (req, res) => {
     res.status(200).json({
         user: req.user.email,
@@ -25,5 +36,6 @@ const respond = (req, res) => {
 export {
     authenticate,
     generateAccessToken,
+    getMe,
     respond
 };
