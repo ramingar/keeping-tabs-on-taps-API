@@ -18,13 +18,10 @@ const ownership = (req, res, config, next) => {
     next();
 };
 
-const isRevoked = (req, res, config, next) => {
-
-    db.connect(config);
+const isRevoked = (req, res, next) => {
 
     RevokedToken.find({tokenId: req.header('Authorization').slice(7)}).then((revokedToken) => {
         if (revokedToken.length > 0) {
-            db.disconnect();
             return res.status(401).json({
                 "message": "The token has been revoked.",
                 "error": {
@@ -34,21 +31,16 @@ const isRevoked = (req, res, config, next) => {
                 }
             });
         } else {
-            db.disconnect();
             next();
         }
     }, () => {
-        db.disconnect();
         next();
     });
 };
 
-const creditorIsMe = (req, res, config, next) => {
-
-    db.connect(config);
+const creditorIsMe = (req, res, next) => {
 
     User.find({email: req.body.creditor}).then((response) => {
-        db.disconnect();
 
         if (0 === response.length) {
             const err = {message: 'Forbidden: creditor can\'t be another user than logged user'};
@@ -62,7 +54,6 @@ const creditorIsMe = (req, res, config, next) => {
 
         next();
     }, (err) => {
-        db.disconnect();
         return res.status(403).json(errorHandler(err));
     });
 

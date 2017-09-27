@@ -9,12 +9,18 @@ import configuration from './config';
 import routes from './routes';
 import User from './model/user';
 import {errorHandler} from './utils/errors';
+import db from './db';
 
 const app = express();
 
 // CONFIG ------------------------------------------------------------------------
 
 const config = configuration(app);
+
+if ('test' === process.env.NODE_ENV || 'test_local' === process.env.NODE_ENV) {
+    db.disconnect();
+}
+db.connect(config);
 
 // passport config
 const localStrategy = Object.create(Strategy.prototype);
@@ -51,8 +57,6 @@ app.use(function (err, req, res, next) {
 
 // RUN SERVER -------------------------------------------------------------------
 
-let server = null;
-
 // To listen for connections only when our index.js file is called directly by node
 // and not when is required by our files.
 // See: https://puigcerber.com/2015/11/27/testing-express-apis-with-tape-and-supertest/
@@ -62,7 +66,7 @@ if (require.main === module) {
         // SSL termination is done on Heroku servers/load-balancers before the traffic gets to the application.
         // So in production, Heroku is in charge of HTTPS.
 
-        server = app.listen(process.env.PORT || config.port, () => {
+        app.listen(process.env.PORT || config.port, () => {
             const listeningPort = process.env.PORT || config.port;
             console.log('Server listening on port ' + listeningPort);
         });
@@ -76,11 +80,11 @@ if (require.main === module) {
             cert: fs.readFileSync(__dirname + '/../cert.pem')
         };
 
-        server = https.createServer(httpsOptions, app).listen(process.env.PORT || config.port, () => {
+        https.createServer(httpsOptions, app).listen(process.env.PORT || config.port, () => {
             const listeningPort = process.env.PORT || config.port;
             console.log('Server listening on port ' + listeningPort);
         });
     }
 }
 
-export {app, server};
+export {app};
