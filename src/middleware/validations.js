@@ -39,12 +39,12 @@ const creditorIsMe = (req, res, next) => {
     User.find({email: req.body.creditor}).then((response) => {
 
         if (0 === response.length) {
-            const err = {message: responses[403]};
+            const err = {message: responses[403] + '. Creditor can\'t be another user than logged user'};
             return res.status(403).json(errorHandler(err));
         }
 
         if (response[0]._id.toString() !== req.params.id) {
-            const err = {message: responses[403]};
+            const err = {message: responses[403] + '. Creditor can\'t be another user than logged user'};
             return res.status(403).json(errorHandler(err));
         }
 
