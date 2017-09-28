@@ -69,10 +69,10 @@ test('-------- Controller: POST /debt', (assert) => {
         });
 });
 
-test('-------- Controller: POST /debt (400 - userDebtor doesn\'t exist)', (assert) => {
+test('-------- Controller: POST /debt (422 - userDebtor doesn\'t exist)', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
-    const statusCodeExpected = 400;
+    const statusCodeExpected = 422;
     const messageExpectedStatusCode = 'Status must be 404 when debtor doesn\'t exist';
 
     let idUserCreditor = null;
