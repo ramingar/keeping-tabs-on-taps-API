@@ -51,9 +51,7 @@ const postDebt = (req, res) => {
 const getDebt = (req, res, config) => {
     Debt.findById(req.params.idDebt).then((response) => {
 
-        const payload = getMyId(req.header('Authorization').slice(7), config);
-
-        if (!amICreditorOrDebtor(response, payload.id)) {
+        if (!amICreditorOrDebtor(response, req.params.id)) {
             return res.status(403).json({"message": "Forbidden: access to the requested resource is forbidden"});
         }
 
