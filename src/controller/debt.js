@@ -11,15 +11,15 @@ const postDebt = (req, res) => {
 
     User.find({email: req.body.creditor}).then((response) => {
         if (0 === response.length) {
-            const err = {message: 'Creditor doesn\'t exist'};
-            return res.status(400).json(errorHandler(err));
+            const err = {message: responses[422] + '. Creditor doesn\'t exist'};
+            return res.status(422).json(errorHandler(err));
         }
 
         creditorId = response[0]._id;
         User.find({email: req.body.debtor}).then((response) => {
             if (0 === response.length) {
-                const err = {message: 'Debtor doesn\'t exist'};
-                return res.status(400).json(errorHandler(err));
+                const err = {message: responses[422] + '. Debtor doesn\'t exist'};
+                return res.status(422).json(errorHandler(err));
             }
 
             debtorId = response[0]._id;
