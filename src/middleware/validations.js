@@ -1,14 +1,10 @@
-import jwt from 'jsonwebtoken';
-
 import RevokedToken from '../model/revokedToken';
 import User from '../model/user';
 import {errorHandler} from '../utils/errors';
+import {getMyId} from "./auth";
 
 const ownership = (req, res, config, next) => {
-    const payload = jwt.verify(
-        req.header('Authorization').slice(7),
-        process.env.APP_JWT_TOKEN_SECRET || config.jwtTokenSecret
-    );
+    const payload = getMyId(req.header('Authorization').slice(7), config);
 
     if (payload.id !== req.params.id) {
         return res.status(403).json({"message": "Forbidden: access to the requested resource is forbidden"});

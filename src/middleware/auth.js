@@ -15,11 +15,12 @@ const generateAccessToken = (req, res, config, next) => {
     next();
 };
 
+const getMyId = (token, config) => {
+    return jwt.verify(token, process.env.APP_JWT_TOKEN_SECRET || config.jwtTokenSecret);
+};
+
 const getMe = (req, res, config) => {
-    const payload = jwt.verify(
-        req.header('Authorization').slice(7),
-        process.env.APP_JWT_TOKEN_SECRET || config.jwtTokenSecret
-    );
+    const payload = getMyId(req.header('Authorization').slice(7), config);
 
     res.status(200).json({
         user: payload.id
@@ -36,6 +37,7 @@ const respond = (req, res) => {
 export {
     authenticate,
     generateAccessToken,
+    getMyId,
     getMe,
     respond
 };

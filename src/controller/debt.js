@@ -1,8 +1,8 @@
-import jwt from 'jsonwebtoken';
 import Debt from '../model/debt';
 import User from '../model/user';
 import {errorHandler, mongooseErrorsCode} from '../utils/errors';
 import {amICreditorOrDebtor} from "../middleware/validations";
+import {getMyId} from "../middleware/auth";
 
 const postDebt = (req, res) => {
 
@@ -51,10 +51,7 @@ const postDebt = (req, res) => {
 const getDebt = (req, res, config) => {
     Debt.findById(req.params.idDebt).then((response) => {
 
-        const payload = jwt.verify(
-            req.header('Authorization').slice(7),
-            process.env.APP_JWT_TOKEN_SECRET || config.jwtTokenSecret
-        );
+        const payload = getMyId(req.header('Authorization').slice(7), config);
 
         if (!amICreditorOrDebtor(response, payload.id)) {
             return res.status(403).json({"message": "Forbidden: access to the requested resource is forbidden"});
