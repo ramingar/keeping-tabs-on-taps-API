@@ -2,12 +2,13 @@ import RevokedToken from '../model/revokedToken';
 import User from '../model/user';
 import {errorHandler} from '../utils/errors';
 import {getMyId} from "./auth";
+import responses from "../utils/responses";
 
 const ownership = (req, res, config, next) => {
     const payload = getMyId(req.header('Authorization').slice(7), config);
 
     if (payload.id !== req.params.id) {
-        return res.status(403).json({"message": "Forbidden: access to the requested resource is forbidden"});
+        return res.status(403).json({"message": responses[403]});
     }
 
     next();
@@ -18,7 +19,7 @@ const isRevoked = (req, res, next) => {
     RevokedToken.find({tokenId: req.header('Authorization').slice(7)}).then((revokedToken) => {
         if (revokedToken.length > 0) {
             return res.status(401).json({
-                "message": "The token has been revoked.",
+                "message": responses[401] + ". The token has been revoked.",
                 "error": {
                     "name": "UnauthorizedError",
                     "code": "revoked_token",
@@ -38,18 +39,18 @@ const creditorIsMe = (req, res, next) => {
     User.find({email: req.body.creditor}).then((response) => {
 
         if (0 === response.length) {
-            const err = {message: 'Forbidden: creditor can\'t be another user than logged user'};
+            const err = {message: responses[403]};
             return res.status(403).json(errorHandler(err));
         }
 
         if (response[0]._id.toString() !== req.params.id) {
-            const err = {message: 'Forbidden: creditor can\'t be another user than logged user'};
+            const err = {message: responses[403]};
             return res.status(403).json(errorHandler(err));
         }
 
         next();
     }, (err) => {
-        return res.status(403).json(errorHandler(err));
+        res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
     });
 
 

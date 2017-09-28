@@ -2,7 +2,7 @@ import Debt from '../model/debt';
 import User from '../model/user';
 import {errorHandler, mongooseErrorsCode} from '../utils/errors';
 import {amICreditorOrDebtor} from "../middleware/validations";
-import {getMyId} from "../middleware/auth";
+import responses from "../utils/responses";
 
 const postDebt = (req, res) => {
 
@@ -52,7 +52,7 @@ const getDebt = (req, res, config) => {
     Debt.findById(req.params.idDebt).then((response) => {
 
         if (!amICreditorOrDebtor(response, req.params.id)) {
-            return res.status(403).json({"message": "Forbidden: access to the requested resource is forbidden"});
+            return res.status(403).json({"message": responses[403]});
         }
 
         const {_id, created, creditor, debtor, concept, payment, status} = response;
