@@ -1,6 +1,6 @@
 {
   "name": "keeping-tabs-on-taps-API",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "An awesome counter for your beers debt",
   "main": "./dist/index.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "https": "^1.0.0",
     "jsonwebtoken": "^8.0.1",
     "mongoose": "^4.11.11",
+    "mongoose-paginate": "^5.0.3",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.2.1"
