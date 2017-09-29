@@ -45,7 +45,7 @@ export default (config) => {
         authenticate(config),
         (req, res, next) => isRevoked(req, res, next),
         (req, res, next) => ownership(req, res, config, next),
-        (req, res) => getDebt(req, res, config)
+        (req, res) => getDebt(req, res)
     );
 
     return routes;

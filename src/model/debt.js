@@ -12,14 +12,6 @@ const DebtShema = Schema({
         ref: 'User',
         required: true
     },
-    creditor: {
-        type: String,
-        required: true
-    },
-    debtor: {
-        type: String,
-        required: true
-    },
     created: {
         type: Date,
         required: true

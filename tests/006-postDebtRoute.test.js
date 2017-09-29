@@ -5,11 +5,10 @@ import {app} from '../src/index';
 test('-------- Controller: POST /debt', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
-    const statusDebtExpected = 'waiting';
     const statusCodeExpected = 201;
     const messageExpectedStatusCode = 'Status must be 201';
-    const messageExpectedDebtor = 'Debtor must match';
-    const messageExpectedCreditor = 'Creditor must match';
+    const messageExpectedConcept = 'Concept must match';
+    const messageExpectedPayment = 'Payment must match';
     const messageStatusDebtExpected = 'Debt\'s status must match';
 
     let idUserCreditor = null;
@@ -23,6 +22,12 @@ test('-------- Controller: POST /debt', (assert) => {
         name: 'DebtorTestUserWithANameVeryLong' + Date.now(),
         email: 'debtorUser' + Date.now() + '@gmail.com',
         pass: '1111'
+    };
+
+    const debt = {
+        payment: 'Another 2kg hamburger with chips and beer',
+        concept: 'We bet that I didn\'t eat a 2kg hamburger in less than 10 minutes',
+        status: 'waiting'
     };
 
     request(app)
@@ -42,17 +47,17 @@ test('-------- Controller: POST /debt', (assert) => {
                                 .post('/user/' + idUserCreditor + '/debt')
                                 .set('Authorization', 'Bearer ' + res.body.token)
                                 .send({
-                                    concept: 'We bet that I didn\'t eat a 2kg hamburger in less than 10 minutes',
+                                    concept: debt.concept,
                                     creditor: userCreditor.email,
                                     debtor: userDebtor.email,
-                                    payment: 'Another 2kg hamburger with chips and beer'
+                                    payment: debt.payment
                                 })
                                 .expect(statusCodeExpected)
                                 .then((res) => {
                                     assert.pass(messageExpectedStatusCode);
-                                    assert.equal(res.body.creditor, userCreditor.email, messageExpectedCreditor);
-                                    assert.equal(res.body.debtor, userDebtor.email, messageExpectedDebtor);
-                                    assert.equal(res.body.status, statusDebtExpected, messageStatusDebtExpected);
+                                    assert.equal(res.body.payment, debt.payment, messageExpectedPayment);
+                                    assert.equal(res.body.concept, debt.concept, messageExpectedConcept);
+                                    assert.equal(res.body.status, debt.status, messageStatusDebtExpected);
                                     assert.end();
                                 }, (err) => {
                                     assert.fail(err.message);

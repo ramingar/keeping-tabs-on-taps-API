@@ -11,7 +11,15 @@ const UserSchema = Schema({
     },
     pass: {
         type: String
-    }
+    },
+    debtsCreditor: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Debt'
+    }],
+    debtsDebtor: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Debt'
+    }]
 });
 
 UserSchema.plugin(passportLocalMongoose, {usernameField: 'email'});
