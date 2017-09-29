@@ -70,17 +70,34 @@ const postDebt = (req, res) => {
 };
 
 const getDebt = (req, res) => {
-    Debt.findById(req.params.idDebt).then((response) => {
+    const queryOptions = {
+        select: '_id creditorId debtorId created concept payment status',
+        populateCreditor: 'creditorId',
+        populateDebtor: 'debtorId',
+        populateSelect: 'email name'
+    };
 
-        if (!amICreditorOrDebtor(response, req.params.id)) {
-            return res.status(403).json({"message": responses[403]});
-        }
+    Debt.findById(req.params.idDebt)
+        .select(queryOptions.select)
+        .populate(queryOptions.populateCreditor, queryOptions.populateSelect)
+        .populate(queryOptions.populateDebtor, queryOptions.populateSelect)
+        .then((response) => {
 
-        const {_id, created, creditor, debtor, concept, payment, status} = response;
-        res.status(200).json({_id, created, creditor, debtor, concept, payment, status});
-    }, (err) => {
-        res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
-    });
+            if (!amICreditorOrDebtor(response, req.params.id)) {
+                return res.status(403).json({"message": responses[403]});
+            }
+
+            // Don't send creditor's and debtor's id
+            const {_id, creditorId, debtorId, created, concept, payment, status} = response;
+            const creditor = Object.assign({}, {email: creditorId.email, name: creditorId.name});
+            const debtor = Object.assign({}, {email: debtorId.email, name: debtorId.name});
+            const debt = {_id, creditor, debtor, created, concept, payment, status};
+
+            res.status(200).json(debt);
+
+        }, (err) => {
+            res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
+        });
 };
 
 const getDebtsCreditor = (req, res) => {

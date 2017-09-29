@@ -9,6 +9,8 @@ test('-------- Controller: GET /user/:id/debt/:idDebt', (assert) => {
     const messageExpectedStatusCode = 'Status must be 200';
     const messageExpectedPayment = 'Payment must match';
     const messageExpectedConcept = 'Concept must match';
+    const messageExpectedCreditorEmail = 'Creditor\'s email must match';
+    const messageExpectedDebtorEmail = 'Debtor\'s email must match';
     const messageStatusDebtExpected = 'Debt\'s status must match';
 
     let idUserCreditor = null;
@@ -65,6 +67,8 @@ test('-------- Controller: GET /user/:id/debt/:idDebt', (assert) => {
                                             assert.equal(res.body.concept, debt.concept, messageExpectedConcept);
                                             assert.equal(res.body.payment, debt.payment, messageExpectedPayment);
                                             assert.equal(res.body.status, debt.status, messageStatusDebtExpected);
+                                            assert.equal(res.body.creditor.email, userCreditor.email, messageExpectedPayment);
+                                            assert.equal(res.body.debtor.email, userDebtor.email, messageStatusDebtExpected);
                                             assert.end();
                                         }, (err) => {
                                             assert.fail(err.message);

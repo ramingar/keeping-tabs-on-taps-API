@@ -4,7 +4,6 @@ import {login, logout, postUser, getUserById} from '../controller/user';
 import {postDebt, getDebt, getDebtsCreditor} from "../controller/debt";
 import {authenticate, getMe} from '../middleware/auth';
 import {ownership, isRevoked, creditorIsMe} from '../middleware/validations';
-import mongoosePaginateOptions from "../utils/mongoosePaginateOptions";
 
 export default (config) => {
     const routes = Router();
