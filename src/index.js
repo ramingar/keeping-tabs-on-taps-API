@@ -25,8 +25,8 @@ db.connect(config);
 
 // mongoose-paginate config
 mongoosePaginate.paginate.options = {
-    page: process.env.APP_MONGOOSE_PAGINATE_PAGE || config.mongoosePaginate.page,
-    limit: process.env.APP_MONGOOSE_PAGINATE_LIMIT || config.mongoosePaginate.limit
+    page: Number.parseInt(process.env.APP_MONGOOSE_PAGINATE_PAGE) || config.mongoosePaginate.page,
+    limit: Number.parseInt(process.env.APP_MONGOOSE_PAGINATE_LIMIT) || config.mongoosePaginate.limit
 };
 
 // passport config
