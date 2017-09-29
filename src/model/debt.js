@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate';
 import {Schema} from 'mongoose';
 
 const DebtShema = Schema({
@@ -31,4 +32,5 @@ const DebtShema = Schema({
     }
 });
 
+DebtShema.plugin(mongoosePaginate);
 export default mongoose.model('Debt', DebtShema);

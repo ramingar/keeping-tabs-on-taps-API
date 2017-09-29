@@ -1,8 +1,10 @@
+import {Types} from 'mongoose';
 import Debt from '../model/debt';
 import User from '../model/user';
 import {errorHandler, mongooseErrorsCode} from '../utils/errors';
 import {amICreditorOrDebtor} from "../middleware/validations";
 import responses from "../utils/responses";
+import mongoosePaginateOptions from "../utils/mongoosePaginateOptions";
 
 const postDebt = (req, res) => {
 
@@ -81,4 +83,21 @@ const getDebt = (req, res) => {
     });
 };
 
-export {postDebt, getDebt};
+const getDebtsCreditor = (req, res) => {
+    const ObjectId = Types.ObjectId;
+    const creditorId = ObjectId(req.params.id);
+
+    const query = {creditorId};
+    const options = mongoosePaginateOptions(req);
+    options.select = '_id created concept payment status';
+
+    Debt.paginate(query, options).then((response) => {
+
+        res.status(200).json(response);
+
+    }, (err) => {
+        res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
+    });
+};
+
+export {postDebt, getDebt, getDebtsCreditor};

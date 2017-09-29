@@ -1,9 +1,10 @@
 import {Router} from 'express';
 import {index} from '../controller';
 import {login, logout, postUser, getUserById} from '../controller/user';
-import {postDebt, getDebt} from "../controller/debt";
+import {postDebt, getDebt, getDebtsCreditor} from "../controller/debt";
 import {authenticate, getMe} from '../middleware/auth';
 import {ownership, isRevoked, creditorIsMe} from '../middleware/validations';
+import mongoosePaginateOptions from "../utils/mongoosePaginateOptions";
 
 export default (config) => {
     const routes = Router();
@@ -46,6 +47,13 @@ export default (config) => {
         (req, res, next) => isRevoked(req, res, next),
         (req, res, next) => ownership(req, res, config, next),
         (req, res) => getDebt(req, res)
+    );
+
+    routes.get('/user/:id/debt',
+        authenticate(config),
+        (req, res, next) => isRevoked(req, res, next),
+        (req, res, next) => ownership(req, res, config, next),
+        (req, res) => getDebtsCreditor(req, res)
     );
 
     return routes;

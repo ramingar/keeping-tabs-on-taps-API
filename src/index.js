@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import fs from 'fs';
 import passport from 'passport';
 import {Strategy} from 'passport-local';
+import mongoosePaginate from 'mongoose-paginate';
 
 import configuration from './config';
 import routes from './routes';
@@ -21,6 +22,12 @@ if ('test' === process.env.NODE_ENV || 'test_local' === process.env.NODE_ENV) {
     db.disconnect();
 }
 db.connect(config);
+
+// mongoose-paginate config
+mongoosePaginate.paginate.options = {
+    page: process.env.APP_MONGOOSE_PAGINATE_PAGE || config.mongoosePaginate.page,
+    limit: process.env.APP_MONGOOSE_PAGINATE_LIMIT || config.mongoosePaginate.limit
+};
 
 // passport config
 const localStrategy = Object.create(Strategy.prototype);
