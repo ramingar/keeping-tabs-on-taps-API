@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate';
 import {Schema} from 'mongoose';
 
-const DebtShema = Schema({
+const DebtSchema = Schema({
     creditorId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -32,5 +32,5 @@ const DebtShema = Schema({
     }
 });
 
-DebtShema.plugin(mongoosePaginate);
-export default mongoose.model('Debt', DebtShema);
+DebtSchema.plugin(mongoosePaginate);
+export default mongoose.model('Debt', DebtSchema);
