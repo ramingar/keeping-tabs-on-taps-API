@@ -100,7 +100,7 @@ const getDebt = (req, res) => {
         });
 };
 
-const getDebtsCreditor = (req, res) => {
+const getDebtsByCreditor = (req, res) => {
     const ObjectId = Types.ObjectId;
     const creditorId = ObjectId(req.params.id);
 
@@ -117,4 +117,4 @@ const getDebtsCreditor = (req, res) => {
     });
 };
 
-export {postDebt, getDebt, getDebtsCreditor};
+export {postDebt, getDebt, getDebtsByCreditor};
