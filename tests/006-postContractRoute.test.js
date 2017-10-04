@@ -2,14 +2,14 @@ import test from 'tape';
 import request from 'supertest';
 import {app} from '../src/index';
 
-test('-------- Controller: POST /debt', (assert) => {
+test('-------- Controller: POST /contract', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
     const statusCodeExpected = 201;
     const messageExpectedStatusCode = 'Status must be 201';
     const messageExpectedConcept = 'Concept must match';
     const messageExpectedPayment = 'Payment must match';
-    const messageStatusDebtExpected = 'Debt\'s status must match';
+    const messageStatusContractExpected = 'Contract\'s status must match';
 
     let idUserCreditor = null;
     const userCreditor = {
@@ -24,7 +24,7 @@ test('-------- Controller: POST /debt', (assert) => {
         pass: '1111'
     };
 
-    const debt = {
+    const contract = {
         payment: 'Another 2kg hamburger with chips and beer',
         concept: 'We bet that I didn\'t eat a 2kg hamburger in less than 10 minutes',
         status: 'waiting'
@@ -44,20 +44,20 @@ test('-------- Controller: POST /debt', (assert) => {
                         .send({email: userCreditor.email, pass: userCreditor.pass})
                         .then((res) => {
                             request(app)
-                                .post('/user/' + idUserCreditor + '/debt')
+                                .post('/user/' + idUserCreditor + '/contract')
                                 .set('Authorization', 'Bearer ' + res.body.token)
                                 .send({
-                                    concept: debt.concept,
+                                    concept: contract.concept,
                                     creditor: userCreditor.email,
                                     debtor: userDebtor.email,
-                                    payment: debt.payment
+                                    payment: contract.payment
                                 })
                                 .expect(statusCodeExpected)
                                 .then((res) => {
                                     assert.pass(messageExpectedStatusCode);
-                                    assert.equal(res.body.payment, debt.payment, messageExpectedPayment);
-                                    assert.equal(res.body.concept, debt.concept, messageExpectedConcept);
-                                    assert.equal(res.body.status, debt.status, messageStatusDebtExpected);
+                                    assert.equal(res.body.payment, contract.payment, messageExpectedPayment);
+                                    assert.equal(res.body.concept, contract.concept, messageExpectedConcept);
+                                    assert.equal(res.body.status, contract.status, messageStatusContractExpected);
                                     assert.end();
                                 }, (err) => {
                                     assert.fail(err.message);
@@ -74,7 +74,7 @@ test('-------- Controller: POST /debt', (assert) => {
         });
 });
 
-test('-------- Controller: POST /debt (422 - userDebtor doesn\'t exist)', (assert) => {
+test('-------- Controller: POST /contract (422 - userDebtor doesn\'t exist)', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
     const statusCodeExpected = 422;
@@ -97,7 +97,7 @@ test('-------- Controller: POST /debt (422 - userDebtor doesn\'t exist)', (asser
                 .send({email: userCreditor.email, pass: userCreditor.pass})
                 .then((res) => {
                     request(app)
-                        .post('/user/' + idUserCreditor + '/debt')
+                        .post('/user/' + idUserCreditor + '/contract')
                         .set('Authorization', 'Bearer ' + res.body.token)
                         .send({
                             concept: '-----------',
@@ -123,11 +123,11 @@ test('-------- Controller: POST /debt (422 - userDebtor doesn\'t exist)', (asser
         });
 });
 
-test('-------- Controller: POST /debt (403 - it is forbidden to create a debt for another user than me)', (assert) => {
+test('-------- Controller: POST /contract (403 - it is forbidden to create a contract for another user than me)', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
     const statusCodeExpected = 403;
-    const messageExpectedStatusCode = 'Status must be 403 when creditor is not the user creating the debt';
+    const messageExpectedStatusCode = 'Status must be 403 when creditor is not the user creating the contract';
 
     let idUserCreditor = null;
     const userCreditor = {
@@ -156,7 +156,7 @@ test('-------- Controller: POST /debt (403 - it is forbidden to create a debt fo
                         .send({email: userCreditor.email, pass: userCreditor.pass})
                         .then((res) => {
                             request(app)
-                                .post('/user/' + idUserCreditor + '/debt')
+                                .post('/user/' + idUserCreditor + '/contract')
                                 .set('Authorization', 'Bearer ' + res.body.token)
                                 .send({
                                     concept: '-----------',

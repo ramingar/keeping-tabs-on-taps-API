@@ -1,10 +1,9 @@
 import {Router} from 'express';
 import {index} from '../controller';
 import {login, logout, postUser, getUserById} from '../controller/user';
-import {postDebt, getDebt, getDebtsCreditor} from "../controller/debt";
+import {postContract, getContract, getContractsByCreditor} from "../controller/contract";
 import {authenticate, getMe} from '../middleware/auth';
 import {ownership, isRevoked, creditorIsMe} from '../middleware/validations';
-import mongoosePaginateOptions from "../utils/mongoosePaginateOptions";
 
 export default (config) => {
     const routes = Router();
@@ -34,26 +33,26 @@ export default (config) => {
         (req, res) => getUserById(req, res)
     );
 
-    routes.post('/user/:id/debt',
+    routes.post('/user/:id/contract',
         authenticate(config),
         (req, res, next) => isRevoked(req, res, next),
         (req, res, next) => ownership(req, res, config, next),
         (req, res, next) => creditorIsMe(req, res, next),
-        (req, res) => postDebt(req, res)
+        (req, res) => postContract(req, res)
     );
 
-    routes.get('/user/:id/debt/:idDebt',
+    routes.get('/user/:id/contract/:idContract',
         authenticate(config),
         (req, res, next) => isRevoked(req, res, next),
         (req, res, next) => ownership(req, res, config, next),
-        (req, res) => getDebt(req, res)
+        (req, res) => getContract(req, res)
     );
 
-    routes.get('/user/:id/debt',
+    routes.get('/user/:id/contract',
         authenticate(config),
         (req, res, next) => isRevoked(req, res, next),
         (req, res, next) => ownership(req, res, config, next),
-        (req, res) => getDebtsCreditor(req, res)
+        (req, res) => getContractsByCreditor(req, res)
     );
 
     return routes;

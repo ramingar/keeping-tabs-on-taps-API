@@ -2,14 +2,14 @@ import test from 'tape';
 import request from 'supertest';
 import {app} from '../src/index';
 
-test('-------- Controller: GET /debt', (assert) => {
+test('-------- Controller: GET /contract', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
     const statusCodeExpected = 200;
     const messageExpectedStatusCode = 'Status must be 200';
     const messageExpectedConcept = 'Concept must match';
     const messageExpectedPayment = 'Payment must match';
-    const messageStatusDebtExpected = 'Debt\'s status must match';
+    const messageStatusContractExpected = 'Contract\'s status must match';
 
     let idUserCreditor = null;
     const userCreditor = {
@@ -24,13 +24,13 @@ test('-------- Controller: GET /debt', (assert) => {
         pass: '1111'
     };
 
-    const debt1 = {
+    const contract1 = {
         payment: '111 --- Another 2kg hamburger with chips and beer',
         concept: '222 --- We bet that I didn\'t eat a 2kg hamburger in less than 10 minutes',
         status: 'waiting'
     };
 
-    const debt2 = {
+    const contract2 = {
         payment: '222 --- Another 2kg hamburger with chips and beer',
         concept: '222 --- We bet that I didn\'t eat a 2kg hamburger in less than 10 minutes',
         status: 'waiting'
@@ -53,43 +53,43 @@ test('-------- Controller: GET /debt', (assert) => {
                         .then((res) => {
                             token = res.body.token;
                             request(app)
-                                .post('/user/' + idUserCreditor + '/debt')
+                                .post('/user/' + idUserCreditor + '/contract')
                                 .set('Authorization', 'Bearer ' + token)
                                 .send({
-                                    concept: debt1.concept,
+                                    concept: contract1.concept,
                                     creditor: userCreditor.email,
                                     debtor: userDebtor.email,
-                                    payment: debt1.payment
+                                    payment: contract1.payment
                                 })
                                 .then(() => {
                                     request(app)
-                                        .post('/user/' + idUserCreditor + '/debt')
+                                        .post('/user/' + idUserCreditor + '/contract')
                                         .set('Authorization', 'Bearer ' + token)
                                         .send({
-                                            concept: debt2.concept,
+                                            concept: contract2.concept,
                                             creditor: userCreditor.email,
                                             debtor: userDebtor.email,
-                                            payment: debt2.payment
+                                            payment: contract2.payment
                                         })
                                         .then(() => {
                                             request(app)
-                                                .get('/user/' + idUserCreditor + '/debt')
+                                                .get('/user/' + idUserCreditor + '/contract')
                                                 .set('Authorization', 'Bearer ' + token)
                                                 .expect(statusCodeExpected)
                                                 .then((res) => {
-                                                    const responsedDebt = res.body.docs[1];
+                                                    const responsedContract = res.body.docs[1];
                                                     assert.pass(messageExpectedStatusCode);
-                                                    assert.equal(responsedDebt.payment,
-                                                        debt2.payment,
+                                                    assert.equal(responsedContract.payment,
+                                                        contract2.payment,
                                                         messageExpectedPayment
                                                     );
-                                                    assert.equal(responsedDebt.concept,
-                                                        debt2.concept,
+                                                    assert.equal(responsedContract.concept,
+                                                        contract2.concept,
                                                         messageExpectedConcept
                                                     );
-                                                    assert.equal(responsedDebt.status,
-                                                        debt2.status,
-                                                        messageStatusDebtExpected
+                                                    assert.equal(responsedContract.status,
+                                                        contract2.status,
+                                                        messageStatusContractExpected
                                                     );
                                                     assert.end();
                                                 }, (err) => {
@@ -116,7 +116,7 @@ test('-------- Controller: GET /debt', (assert) => {
 });
 
 
-test('-------- Controller: GET /debt (Unauthorized access)', (assert) => {
+test('-------- Controller: GET /contract (Unauthorized access)', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
     const statusCodeExpected = 401;
@@ -142,7 +142,7 @@ test('-------- Controller: GET /debt (Unauthorized access)', (assert) => {
                 .then((res) => {
                     token = res.body.token;
                     request(app)
-                        .get('/user/' + idUserCreditor + '/debt')
+                        .get('/user/' + idUserCreditor + '/contract')
                         .expect(statusCodeExpected)
                         .then(() => {
                             assert.pass(messageExpectedStatusCode);
@@ -161,12 +161,12 @@ test('-------- Controller: GET /debt (Unauthorized access)', (assert) => {
         });
 });
 
-test('-------- Controller: GET /debt (forbidden access)', (assert) => {
+test('-------- Controller: GET /contract (forbidden access)', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
     const otherUserId = 11111111111111;
     const statusCodeExpected = 403;
-    const messageExpectedStatusCode = 'Status must be 403 if you want retrieve debts from other user';
+    const messageExpectedStatusCode = 'Status must be 403 if you want retrieve contracts from other user';
 
     let idUserCreditor = null;
     const userCreditor = {
@@ -188,7 +188,7 @@ test('-------- Controller: GET /debt (forbidden access)', (assert) => {
                 .then((res) => {
                     token = res.body.token;
                     request(app)
-                        .get('/user/' + otherUserId + '/debt')
+                        .get('/user/' + otherUserId + '/contract')
                         .set('Authorization', 'Bearer ' + token)
                         .expect(statusCodeExpected)
                         .then(() => {

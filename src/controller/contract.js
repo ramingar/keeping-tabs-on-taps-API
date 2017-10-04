@@ -1,12 +1,12 @@
 import {Types} from 'mongoose';
-import Debt from '../model/debt';
+import Contract from '../model/contract';
 import User from '../model/user';
 import {errorHandler, mongooseErrorsCode} from '../utils/errors';
 import {amICreditorOrDebtor} from "../middleware/validations";
 import responses from "../utils/responses";
 import mongoosePaginateOptions from "../utils/mongoosePaginateOptions";
 
-const postDebt = (req, res) => {
+const postContract = (req, res) => {
 
     let userCreditor = null;
     let userDebtor = null;
@@ -34,20 +34,20 @@ const postDebt = (req, res) => {
             const {concept, payment} = req.body;
             const data = Object.assign({}, {concept, payment, creditorId, debtorId, created});
 
-            let debt = Debt();
-            debt = Object.assign(debt, data);
+            let contract = Contract();
+            contract = Object.assign(contract, data);
 
-            debt.save().then((responseDebt) => {
-                    const {_id, created, concept, payment, status} = responseDebt;
+            contract.save().then((responseContract) => {
+                    const {_id, created, concept, payment, status} = responseContract;
                     finalResponse = {_id, created, concept, payment, status};
 
-                    userCreditor.debtsCreditor.push(responseDebt);
+                    userCreditor.contractsCreditor.push(responseContract);
                     userCreditor.save((res) => {
                     }, (err) => {
                         console.log(err);
                     });
 
-                    userDebtor.debtsDebtor.push(responseDebt);
+                    userDebtor.contractsDebtor.push(responseContract);
                     userDebtor.save((res) => {
                     }, (err) => {
                         console.log(err);
@@ -69,21 +69,38 @@ const postDebt = (req, res) => {
 
 };
 
-const getDebt = (req, res) => {
-    Debt.findById(req.params.idDebt).then((response) => {
+const getContract = (req, res) => {
+    const queryOptions = {
+        select: '_id creditorId debtorId created concept payment status',
+        populateCreditor: 'creditorId',
+        populateDebtor: 'debtorId',
+        populateSelect: 'email name'
+    };
 
-        if (!amICreditorOrDebtor(response, req.params.id)) {
-            return res.status(403).json({"message": responses[403]});
-        }
+    Contract.findById(req.params.idContract)
+        .select(queryOptions.select)
+        .populate(queryOptions.populateCreditor, queryOptions.populateSelect)
+        .populate(queryOptions.populateDebtor, queryOptions.populateSelect)
+        .then((response) => {
 
-        const {_id, created, creditor, debtor, concept, payment, status} = response;
-        res.status(200).json({_id, created, creditor, debtor, concept, payment, status});
-    }, (err) => {
-        res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
-    });
+            if (!amICreditorOrDebtor(response, req.params.id)) {
+                return res.status(403).json({"message": responses[403]});
+            }
+
+            // Don't send creditor's and debtor's id
+            const {_id, creditorId, debtorId, created, concept, payment, status} = response;
+            const creditor = Object.assign({}, {email: creditorId.email, name: creditorId.name});
+            const debtor = Object.assign({}, {email: debtorId.email, name: debtorId.name});
+            const contract = {_id, creditor, debtor, created, concept, payment, status};
+
+            res.status(200).json(contract);
+
+        }, (err) => {
+            res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
+        });
 };
 
-const getDebtsCreditor = (req, res) => {
+const getContractsByCreditor = (req, res) => {
     const ObjectId = Types.ObjectId;
     const creditorId = ObjectId(req.params.id);
 
@@ -91,7 +108,7 @@ const getDebtsCreditor = (req, res) => {
     const options = mongoosePaginateOptions(req);
     options.select = '_id created concept payment status';
 
-    Debt.paginate(query, options).then((response) => {
+    Contract.paginate(query, options).then((response) => {
 
         res.status(200).json(response);
 
@@ -100,4 +117,4 @@ const getDebtsCreditor = (req, res) => {
     });
 };
 
-export {postDebt, getDebt, getDebtsCreditor};
+export {postContract, getContract, getContractsByCreditor};

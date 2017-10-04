@@ -56,11 +56,11 @@ const creditorIsMe = (req, res, next) => {
 
 };
 
-const amICreditorOrDebtor = (debt, me) => {
-    const {creditorId, debtorId} = debt;
+const amICreditorOrDebtor = (contract, me) => {
+    const {creditorId, debtorId} = contract;
 
-    if (creditorId.toString() === me) return 1;
-    if (debtorId.toString() === me) return 2;
+    if (creditorId._id.toString() === me) return 1;
+    if (debtorId._id.toString() === me) return 2;
     return 0;
 };
 
