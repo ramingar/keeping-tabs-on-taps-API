@@ -27,7 +27,7 @@ test('-------- Util buildResponse', (assert) => {
             'page': 1,
             'pages': 1
         },
-        'docs': [
+        '_docs': [
             {
                 '_id': 'blablablabla',
                 'created': '2017-10-04T15:10:47.472Z',

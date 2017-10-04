@@ -12,8 +12,13 @@ const setPage = (response) => {
     return Object.assign({}, {_page: pageSection, docs});
 };
 
+const setDocs = (response) => {
+    return Object.assign({}, {_page: response._page, _docs: response.docs});
+};
+
 const buildResponse = (response) => {
-    return setPage(response);
+    const newResponseWithPage = setPage(response);
+    return setDocs(newResponseWithPage);
 };
 
 export {codeMessages, buildResponse};
