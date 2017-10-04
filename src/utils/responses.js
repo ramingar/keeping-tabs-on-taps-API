@@ -20,4 +20,19 @@ const buildResponse = (response) => {
     return setDocs(setPage(response));
 };
 
-export {codeMessages, buildResponse};
+const setLinks = (req, res) => {
+
+    const _links = {
+        'id': '/me',
+        'login': '/login',
+        'logout': '/logout'
+    };
+
+    if (req.user && req.user.id) {
+        _links.user = '/user/' + req.user.id;
+    }
+
+    return Object.assign({}, {_links, _page: res._page, _docs: res._docs});
+};
+
+export {codeMessages, buildResponse, setLinks};
