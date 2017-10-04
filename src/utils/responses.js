@@ -46,6 +46,7 @@ const setLinks = (req, res) => {
 
     if (req.user && req.user.id) {
         _links.user = '/user/' + req.user.id;
+        _links.contractsAsCreditor = '/user/' + req.user.id + '/contract';
     }
 
     return Object.assign({}, {_links, _page: res._page, _docs: res._docs, _data: res._data, _doc: res._doc});
