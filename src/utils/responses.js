@@ -17,8 +17,7 @@ const setDocs = (response) => {
 };
 
 const buildResponse = (response) => {
-    const newResponseWithPage = setPage(response);
-    return setDocs(newResponseWithPage);
+    return setDocs(setPage(response));
 };
 
 export {codeMessages, buildResponse};
