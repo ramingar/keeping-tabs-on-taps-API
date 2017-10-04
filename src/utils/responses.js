@@ -39,12 +39,12 @@ const buildResponse = (response) => {
 const setLinks = (req, res) => {
 
     const _links = {
-        'id': '/me',
         'login': '/login',
         'logout': '/logout'
     };
 
     if (req.user && req.user.id) {
+        _links.id = '/me';
         _links.user = '/user/' + req.user.id;
         _links.contractsAsCreditor = '/user/' + req.user.id + '/contract';
     }
