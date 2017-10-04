@@ -104,7 +104,8 @@ test('-------- Util setLinks()', (assert) => {
             'id': '/me',
             'login': '/login',
             'logout': '/logout',
-            'user': '/user/1111'
+            'user': '/user/1111',
+            "contractsAsCreditor": "/user/1111/contract"
         },
         '_page': {
             'total': 1,
