@@ -21,7 +21,7 @@ test('-------- Util buildResponse(): multi result', (assert) => {
     };
 
     const responseExpected = {
-        '_page': {
+        '_result': {
             'total': 1,
             'limit': 50,
             'page': 1,
@@ -107,7 +107,7 @@ test('-------- Util setLinks()', (assert) => {
             'user': '/user/1111',
             "contractsAsCreditor": "/user/1111/contract"
         },
-        '_page': {
+        '_result': {
             'total': 1,
             'limit': 50,
             'page': 1,
