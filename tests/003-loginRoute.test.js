@@ -28,8 +28,8 @@ test('-------- Controller: POST /login', (assert) => {
                     .then(
                         (res) => {
                             assert.pass(messageExpectedStatusCode);
-                            assert.equal(res.body.user, user.email, messageExpectedUser);
-                            assert.notEqual(res.body.token, '', messageExpectedToken);
+                            assert.equal(res.body._data.user, user.email, messageExpectedUser);
+                            assert.notEqual(res.body._data.token, '', messageExpectedToken);
                             assert.end();
                         }, (err) => {
                             assert.fail(err.message);

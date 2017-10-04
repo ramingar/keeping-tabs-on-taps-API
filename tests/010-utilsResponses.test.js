@@ -1,10 +1,10 @@
 import test from 'tape';
 import {buildResponse, setLinks} from '../src/utils/responses';
 
-test('-------- Util buildResponse()', (assert) => {
+test('-------- Util buildResponse(): multi result', (assert) => {
     const message = 'Response expected must match with the actual response';
 
-    const response = {
+    const responseTemp = {
         'total': 1,
         'limit': 50,
         'page': 1,
@@ -38,7 +38,36 @@ test('-------- Util buildResponse()', (assert) => {
         ]
     };
 
-    const actualResponse = buildResponse(response);
+    const actualResponse = buildResponse(responseTemp);
+
+    assert.deepEqual(actualResponse, responseExpected, message);
+    assert.end();
+});
+
+test('-------- Util buildResponse(): single result', (assert) => {
+    const message = 'Response expected must match with the actual response';
+
+    const responseTemp = {
+
+        '_id': 'blablablabla',
+        'created': '2017-10-04T15:10:47.472Z',
+        'payment': 'Another 2kg hamburger with chips and beer',
+        'concept': 'We bet that I didn\'t eat a 2kg hamburger in less than 10 minutes',
+        'status': 'waiting'
+
+    };
+
+    const responseExpected = {
+        '_data': {
+            '_id': 'blablablabla',
+            'created': '2017-10-04T15:10:47.472Z',
+            'payment': 'Another 2kg hamburger with chips and beer',
+            'concept': 'We bet that I didn\'t eat a 2kg hamburger in less than 10 minutes',
+            'status': 'waiting'
+        }
+    };
+
+    const actualResponse = buildResponse(responseTemp);
 
     assert.deepEqual(actualResponse, responseExpected, message);
     assert.end();
@@ -54,7 +83,7 @@ test('-------- Util setLinks()', (assert) => {
         }
     };
 
-    const response = {
+    const responseTemp = {
         'total': 1,
         'limit': 50,
         'page': 1,
@@ -91,10 +120,12 @@ test('-------- Util setLinks()', (assert) => {
                 'concept': 'We bet that I didn\'t eat a 2kg hamburger in less than 10 minutes',
                 'status': 'waiting'
             }
-        ]
+        ],
+        _data: undefined,
+        _doc: undefined
     };
 
-    const actualResponse = setLinks(request, buildResponse(response));
+    const actualResponse = setLinks(request, buildResponse(responseTemp));
 
     assert.deepEqual(actualResponse, responseExpected, message);
     assert.end();

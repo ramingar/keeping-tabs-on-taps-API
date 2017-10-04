@@ -22,18 +22,18 @@ test('-------- Controller: GET /me', (assert) => {
         .post(urlUser)
         .send(user)
         .then((res) => {
-            idUser = res.body._id;
+            idUser = res.body._data._id;
             request(app)
                 .post(urlLogin)
                 .send({email: user.email, pass: user.pass})
                 .then((res) => {
                     request(app)
                         .get(urlMe)
-                        .set('Authorization', 'Bearer ' + res.body.token)
+                        .set('Authorization', 'Bearer ' + res.body._data.token)
                         .expect(statusCodeExpected)
                         .then((res) => {
                             assert.pass(messageExpectedStatusCode);
-                            assert.equal(res.body.user, idUser, messageExpectedId);
+                            assert.equal(res.body._data.user, idUser, messageExpectedId);
                             assert.end();
                         }, (err) => {
                             assert.fail(err.message);

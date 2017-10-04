@@ -46,12 +46,12 @@ test('-------- Controller: GET /user/:id/contract', (assert) => {
                 .post(urlPostUser)
                 .send(userCreditor)
                 .then((res) => {
-                    idUserCreditor = res.body._id;
+                    idUserCreditor = res.body._data._id;
                     request(app)
                         .post(urlLogin)
                         .send({email: userCreditor.email, pass: userCreditor.pass})
                         .then((res) => {
-                            token = res.body.token;
+                            token = res.body._data.token;
                             request(app)
                                 .post('/user/' + idUserCreditor + '/contract')
                                 .set('Authorization', 'Bearer ' + token)
@@ -135,12 +135,12 @@ test('-------- Controller: GET /user/:id/contract (Unauthorized access)', (asser
         .post(urlPostUser)
         .send(userCreditor)
         .then((res) => {
-            idUserCreditor = res.body._id;
+            idUserCreditor = res.body._data._id;
             request(app)
                 .post(urlLogin)
                 .send({email: userCreditor.email, pass: userCreditor.pass})
                 .then((res) => {
-                    token = res.body.token;
+                    token = res.body._data.token;
                     request(app)
                         .get('/user/' + idUserCreditor + '/contract')
                         .expect(statusCodeExpected)
@@ -181,12 +181,12 @@ test('-------- Controller: GET /user/:id/contract (forbidden access)', (assert) 
         .post(urlPostUser)
         .send(userCreditor)
         .then((res) => {
-            idUserCreditor = res.body._id;
+            idUserCreditor = res.body._data._id;
             request(app)
                 .post(urlLogin)
                 .send({email: userCreditor.email, pass: userCreditor.pass})
                 .then((res) => {
-                    token = res.body.token;
+                    token = res.body._data.token;
                     request(app)
                         .get('/user/' + otherUserId + '/contract')
                         .set('Authorization', 'Bearer ' + token)

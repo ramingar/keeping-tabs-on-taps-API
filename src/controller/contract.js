@@ -53,7 +53,7 @@ const postContract = (req, res) => {
                         console.log(err);
                     });
 
-                    res.status(201).json(finalResponse);
+                    res.status(201).json(setLinks(req, buildResponse(finalResponse)));
 
                 }, (err) => {
                     res.status(err.status || 500).json(errorHandler(err));
@@ -93,7 +93,7 @@ const getContract = (req, res) => {
             const debtor = Object.assign({}, {email: debtorId.email, name: debtorId.name});
             const contract = {_id, creditor, debtor, created, concept, payment, status};
 
-            res.status(200).json(contract);
+            res.status(200).json(setLinks(req, buildResponse(contract)));
 
         }, (err) => {
             res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));

@@ -16,8 +16,24 @@ const setDocs = (response) => {
     return Object.assign({}, {_page: response._page, _docs: response.docs});
 };
 
+const setDoc = (response) => {
+    return Object.assign({}, {_page: response._page, _data: response._doc});
+};
+
+const setData = (response) => {
+    return Object.assign({}, {'_data': {...response}});
+};
+
 const buildResponse = (response) => {
-    return setDocs(setPage(response));
+    let newResponse = null;
+    if (response.docs) {
+        newResponse = setDocs(setPage(response));
+    } else if (response._doc) {
+        newResponse = setDoc(response);
+    } else {
+        newResponse = setData(response);
+    }
+    return newResponse;
 };
 
 const setLinks = (req, res) => {
@@ -32,7 +48,7 @@ const setLinks = (req, res) => {
         _links.user = '/user/' + req.user.id;
     }
 
-    return Object.assign({}, {_links, _page: res._page, _docs: res._docs});
+    return Object.assign({}, {_links, _page: res._page, _docs: res._docs, _data: res._data, _doc: res._doc});
 };
 
 export {codeMessages, buildResponse, setLinks};
