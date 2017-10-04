@@ -3,7 +3,7 @@ import Contract from '../model/contract';
 import User from '../model/user';
 import {errorHandler, mongooseErrorsCode} from '../utils/errors';
 import {amICreditorOrDebtor} from "../middleware/validations";
-import {codeMessages} from "../utils/responses";
+import {buildResponse, codeMessages} from "../utils/responses";
 import mongoosePaginateOptions from "../utils/mongoosePaginateOptions";
 
 const postContract = (req, res) => {
@@ -110,7 +110,7 @@ const getContractsByCreditor = (req, res) => {
 
     Contract.paginate(query, options).then((response) => {
 
-        res.status(200).json(response);
+        res.status(200).json(buildResponse(response));
 
     }, (err) => {
         res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
