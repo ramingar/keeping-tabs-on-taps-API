@@ -12,13 +12,13 @@ const UserSchema = Schema({
     pass: {
         type: String
     },
-    debtsCreditor: [{
+    contractsCreditor: [{
         type: Schema.Types.ObjectId,
-        ref: 'Debt'
+        ref: 'Contract'
     }],
-    debtsDebtor: [{
+    contractsDebtor: [{
         type: Schema.Types.ObjectId,
-        ref: 'Debt'
+        ref: 'Contract'
     }]
 });
 
