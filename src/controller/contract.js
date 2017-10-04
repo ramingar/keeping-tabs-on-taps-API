@@ -3,7 +3,7 @@ import Contract from '../model/contract';
 import User from '../model/user';
 import {errorHandler, mongooseErrorsCode} from '../utils/errors';
 import {amICreditorOrDebtor} from "../middleware/validations";
-import responses from "../utils/responses";
+import {codeMessages} from "../utils/responses";
 import mongoosePaginateOptions from "../utils/mongoosePaginateOptions";
 
 const postContract = (req, res) => {
@@ -14,7 +14,7 @@ const postContract = (req, res) => {
 
     User.find({email: req.body.creditor}).then((responseCreditor) => {
         if (0 === responseCreditor.length) {
-            const err = {message: responses[422] + '. Creditor doesn\'t exist'};
+            const err = {message: codeMessages[422] + '. Creditor doesn\'t exist'};
             return res.status(422).json(errorHandler(err));
         }
 
@@ -22,7 +22,7 @@ const postContract = (req, res) => {
 
         User.find({email: req.body.debtor}).then((responseDebtor) => {
             if (0 === responseDebtor.length) {
-                const err = {message: responses[422] + '. Debtor doesn\'t exist'};
+                const err = {message: codeMessages[422] + '. Debtor doesn\'t exist'};
                 return res.status(422).json(errorHandler(err));
             }
 
@@ -84,7 +84,7 @@ const getContract = (req, res) => {
         .then((response) => {
 
             if (!amICreditorOrDebtor(response, req.params.id)) {
-                return res.status(403).json({"message": responses[403]});
+                return res.status(403).json({"message": codeMessages[403]});
             }
 
             // Don't send creditor's and debtor's id
