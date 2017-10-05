@@ -1,3 +1,5 @@
+import {paginate} from 'mongoose-paginate';
+
 const codeMessages = {
     400: "Request malformed or has an invalid syntax",
     401: "Unauthorized: access to the requested resource is unauthorized",
@@ -36,6 +38,30 @@ const buildResponse = (response) => {
     return newResponse;
 };
 
+const setNextAndPrevious = (request, response) => {
+    if (response._result.page === 1 && response._result.page >= response._result.pages) return;
+
+    const page = {};
+    const urlWithoutQuery = request.url.split('?')[0];
+
+    const queryLimit = request.query.limit || paginate.options.limit;
+    const queryPage = request.query.page || paginate.options.page;
+
+    const next = `${urlWithoutQuery}?page=${Number.parseInt(queryPage) + 1}&limit=${queryLimit}`;
+    const previous = `${urlWithoutQuery}?page=${Number.parseInt(queryPage) - 1}&limit=${queryLimit}`;
+
+    if (response._result.page === 1) {
+        page.next = next;
+    } else if (response._result.page >= response._result.pages) {
+        page.previous = previous;
+    } else {
+        page.next = next;
+        page.previous = previous;
+    }
+
+    return page;
+};
+
 const setLinks = (req, res) => {
 
     const _links = {
@@ -47,6 +73,10 @@ const setLinks = (req, res) => {
         _links.id = '/me';
         _links.user = '/user/' + req.user.id;
         _links.contractsAsCreditor = '/user/' + req.user.id + '/contract';
+    }
+
+    if (res._result) {
+        _links.page = setNextAndPrevious(req, res);
     }
 
     return Object.assign({}, {_links, _result: res._result, _docs: res._docs, _data: res._data, _doc: res._doc});
