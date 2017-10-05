@@ -1,12 +1,12 @@
 {
   "name": "keeping-tabs-on-taps-API",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "An awesome counter for your beers debt",
   "main": "./dist/index.js",
   "scripts": {
-    "dev": "NODE_ENV=development ./node_modules/.bin/nodemon -w src --exec \"./node_modules/.bin/babel-node src --presets env\"",
+    "dev": "NODE_ENV=development ./node_modules/.bin/nodemon -w src --exec \"./node_modules/.bin/babel-node src --presets 'env,stage-2'\"",
     "prestart": "npm run -s build",
-    "build": "./node_modules/.bin/babel src -s -D -d dist --presets env",
+    "build": "./node_modules/.bin/babel src -s -D -d dist --presets 'env,stage-2'",
     "start": "NODE_ENV=production node ./dist/",
     "test": "export BABEL_ENV=test && export NODE_ENV=test && ./node_modules/.bin/babel-tape-runner ./tests/*.test.js | ./node_modules/.bin/tap-spec",
     "test-local": "export BABEL_ENV=test_local && export NODE_ENV=test_local && ./node_modules/.bin/babel-tape-runner ./tests/*.test.js | ./node_modules/.bin/tap-spec"
@@ -29,6 +29,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-2": "^6.24.1",
     "babel-tape-runner": "^2.0.1",
     "nodemon": "^1.12.1",
     "supertest": "^3.0.0",

@@ -81,7 +81,7 @@ test('-------- Controller: POST /user', (assert) => {
         .expect(statusCodeExpected)
         .then(
             (res) => {
-                const {name, email} = res.body;
+                const {name, email} = res.body._data;
                 assert.deepEqual(
                     Object.assign({}, {name, email}),
                     Object.assign({}, {name: user.name, email: user.email}),

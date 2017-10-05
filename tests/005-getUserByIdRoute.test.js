@@ -21,20 +21,20 @@ test('-------- Controller: GET /user/:id', (assert) => {
     request(app)
         .post(urlUser)
         .send(user)
-        .then((res) => {
-            idUser = res.body._id;
+        .then(res => {
+            idUser = res.body._data._id;
             request(app)
                 .post(urlLogin)
                 .send({email: user.email, pass: user.pass})
-                .then((res) => {
+                .then(res => {
                     request(app)
                         .get(urlUser + '/' + idUser)
-                        .set('Authorization', 'Bearer ' + res.body.token)
+                        .set('Authorization', 'Bearer ' + res.body._data.token)
                         .expect(statusCodeExpected)
-                        .then((res) => {
+                        .then(res => {
                             assert.pass(messageExpectedStatusCode);
-                            assert.equal(res.body.name, user.name, messageExpectedName);
-                            assert.equal(res.body.email, user.email, messageExpectedEmail);
+                            assert.equal(res.body._data.name, user.name, messageExpectedName);
+                            assert.equal(res.body._data.email, user.email, messageExpectedEmail);
                             assert.end();
                         }, (err) => {
                             assert.fail(err.message);
@@ -74,7 +74,7 @@ test('-------- Controller: GET /user/:id (forbidden access to the requested reso
                 .then((res) => {
                     request(app)
                         .get(urlUser + '/' + idUser)
-                        .set('Authorization', 'Bearer ' + res.body.token)
+                        .set('Authorization', 'Bearer ' + res.body._data.token)
                         .expect(statusCodeExpected)
                         .then(() => {
                             assert.pass(messageExpectedStatusCode);

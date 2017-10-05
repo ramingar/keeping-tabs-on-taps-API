@@ -14,7 +14,7 @@ test('-------- Controller: GET /', (assert) => {
         .expect('Content-Type', /json/)
         .then(
             (res) => {
-                assert.deepEqual(res.body, responsePayloadExpected, message);
+                assert.deepEqual(res.body._data, responsePayloadExpected, message);
                 assert.end();
             }, (err) => {
                 assert.fail(err.message);

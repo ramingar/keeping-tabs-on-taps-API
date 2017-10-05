@@ -1,13 +1,22 @@
 {
   "env": {
     "development": {
-      "presets": ["env"]
+      "presets": [
+        "env",
+        "stage-2"
+      ]
     },
     "test": {
-      "presets": ["env"]
+      "presets": [
+        "env",
+        "stage-2"
+      ]
     },
     "test_local": {
-      "presets": ["env"]
+      "presets": [
+        "env",
+        "stage-2"
+      ]
     }
   }
 }

@@ -2,7 +2,7 @@ import test from 'tape';
 import request from 'supertest';
 import {app} from '../src/index';
 
-test('-------- Controller: GET /contract', (assert) => {
+test('-------- Controller: GET /user/:id/contract', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
     const statusCodeExpected = 200;
@@ -46,12 +46,12 @@ test('-------- Controller: GET /contract', (assert) => {
                 .post(urlPostUser)
                 .send(userCreditor)
                 .then((res) => {
-                    idUserCreditor = res.body._id;
+                    idUserCreditor = res.body._data._id;
                     request(app)
                         .post(urlLogin)
                         .send({email: userCreditor.email, pass: userCreditor.pass})
                         .then((res) => {
-                            token = res.body.token;
+                            token = res.body._data.token;
                             request(app)
                                 .post('/user/' + idUserCreditor + '/contract')
                                 .set('Authorization', 'Bearer ' + token)
@@ -77,7 +77,7 @@ test('-------- Controller: GET /contract', (assert) => {
                                                 .set('Authorization', 'Bearer ' + token)
                                                 .expect(statusCodeExpected)
                                                 .then((res) => {
-                                                    const responsedContract = res.body.docs[1];
+                                                    const responsedContract = res.body._docs[1];
                                                     assert.pass(messageExpectedStatusCode);
                                                     assert.equal(responsedContract.payment,
                                                         contract2.payment,
@@ -116,7 +116,7 @@ test('-------- Controller: GET /contract', (assert) => {
 });
 
 
-test('-------- Controller: GET /contract (Unauthorized access)', (assert) => {
+test('-------- Controller: GET /user/:id/contract (Unauthorized access)', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
     const statusCodeExpected = 401;
@@ -135,12 +135,12 @@ test('-------- Controller: GET /contract (Unauthorized access)', (assert) => {
         .post(urlPostUser)
         .send(userCreditor)
         .then((res) => {
-            idUserCreditor = res.body._id;
+            idUserCreditor = res.body._data._id;
             request(app)
                 .post(urlLogin)
                 .send({email: userCreditor.email, pass: userCreditor.pass})
                 .then((res) => {
-                    token = res.body.token;
+                    token = res.body._data.token;
                     request(app)
                         .get('/user/' + idUserCreditor + '/contract')
                         .expect(statusCodeExpected)
@@ -161,7 +161,7 @@ test('-------- Controller: GET /contract (Unauthorized access)', (assert) => {
         });
 });
 
-test('-------- Controller: GET /contract (forbidden access)', (assert) => {
+test('-------- Controller: GET /user/:id/contract (forbidden access)', (assert) => {
     const urlLogin = '/login';
     const urlPostUser = '/user';
     const otherUserId = 11111111111111;
@@ -181,12 +181,12 @@ test('-------- Controller: GET /contract (forbidden access)', (assert) => {
         .post(urlPostUser)
         .send(userCreditor)
         .then((res) => {
-            idUserCreditor = res.body._id;
+            idUserCreditor = res.body._data._id;
             request(app)
                 .post(urlLogin)
                 .send({email: userCreditor.email, pass: userCreditor.pass})
                 .then((res) => {
-                    token = res.body.token;
+                    token = res.body._data.token;
                     request(app)
                         .get('/user/' + otherUserId + '/contract')
                         .set('Authorization', 'Bearer ' + token)

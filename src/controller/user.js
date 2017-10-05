@@ -5,6 +5,7 @@ import User from '../model/user';
 import RevokedToken from '../model/revokedToken';
 import {generateAccessToken, respond} from '../middleware/auth';
 import {errorHandler, passportLocalMongooseErrorsCode, mongooseErrorsCode} from '../utils/errors';
+import {buildResponse, setLinks} from "../utils/responses";
 
 const postUser = (req, res) => {
 
@@ -16,7 +17,7 @@ const postUser = (req, res) => {
         user.name = req.body.name;
         user.save().then((response) => {
                 const {_id, name, email} = response;
-                const payload = Object.assign({}, {_id, name, email});
+                const payload = setLinks(req, buildResponse(Object.assign({}, {_id, name, email})));
                 res.status(201).json(payload);
             }, (err) => {
                 res.status(err.status || 500).json(errorHandler(err));
@@ -56,7 +57,7 @@ const logout = (req, res, config) => {
 const getUserById = (req, res) => {
 
     User.findById(req.params.id).then((response) => {
-        res.status(200).json(response);
+        res.status(200).json(setLinks(req, buildResponse(response)));
     }, (err) => {
         res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
     });

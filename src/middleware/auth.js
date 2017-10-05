@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import expressJwt from 'express-jwt';
+import {buildResponse, setLinks} from "../utils/responses";
 
 const authenticate = (config) => expressJwt({secret: process.env.APP_JWT_TOKEN_SECRET || config.jwtTokenSecret});
 
@@ -22,16 +23,16 @@ const getMyId = (token, config) => {
 const getMe = (req, res, config) => {
     const payload = getMyId(req.header('Authorization').slice(7), config);
 
-    res.status(200).json({
+    res.status(200).json(setLinks(req, buildResponse({
         user: payload.id
-    });
+    })));
 };
 
 const respond = (req, res) => {
-    res.status(200).json({
+    res.status(200).json(setLinks(req, buildResponse({
         user: req.user.email,
         token: req.token
-    });
+    })));
 };
 
 export {

@@ -18,34 +18,30 @@ test('-------- Controller: GET /logout', (assert) => {
     request(app)
         .post(urlPostUser)
         .send(user)
-        .then(
-            () => {
-                request(app)
-                    .post(urlLogin)
-                    .send({email: user.email, pass: user.pass})
-                    .then(
-                        (res) => {
-                            request(app)
-                                .get(urlLogout)
-                                .set('Authorization', 'Bearer ' + res.body.token)
-                                .expect(statusCodeExpected)
-                                .then(() => {
-                                    assert.pass(messageExpectedStatusCode);
-                                    assert.end();
-                                }, (err) => {
-                                    assert.fail(err.message);
-                                    assert.end();
-                                });
+        .then(() => {
+            request(app)
+                .post(urlLogin)
+                .send({email: user.email, pass: user.pass})
+                .then(res => {
+                    request(app)
+                        .get(urlLogout)
+                        .set('Authorization', 'Bearer ' + res.body._data.token)
+                        .expect(statusCodeExpected)
+                        .then(() => {
+                            assert.pass(messageExpectedStatusCode);
+                            assert.end();
                         }, (err) => {
                             assert.fail(err.message);
                             assert.end();
-                        }
-                    );
-            }, (err) => {
-                assert.fail(err.message);
-                assert.end();
-            }
-        );
+                        });
+                }, (err) => {
+                    assert.fail(err.message);
+                    assert.end();
+                });
+        }, (err) => {
+            assert.fail(err.message);
+            assert.end();
+        });
 });
 
 test('-------- Controller: GET /logout (no \'Authorization\' header)', (assert) => {
@@ -78,6 +74,8 @@ test('-------- Controller: GET /logout (using a revoked token)', (assert) => {
         pass: '1111'
     };
 
+    let token = null;
+
     request(app)
         .post(urlPostUser)
         .send(user)
@@ -85,14 +83,15 @@ test('-------- Controller: GET /logout (using a revoked token)', (assert) => {
             request(app)
                 .post(urlLogin)
                 .send({email: user.email, pass: user.pass})
-                .then((res) => {
+                .then(res => {
+                    token = res.body._data.token;
                     request(app)
                         .get(urlLogout)
-                        .set('Authorization', 'Bearer ' + res.body.token)
-                        .then((res) => {
+                        .set('Authorization', 'Bearer ' + token)
+                        .then(res => {
                             request(app)
                                 .get(urlLogout)
-                                .set('Authorization', 'Bearer ' + res.body.token)
+                                .set('Authorization', 'Bearer ' + token)
                                 .expect(statusCodeExpected)
                                 .then(() => {
                                     assert.pass(messageExpectedStatusCode);

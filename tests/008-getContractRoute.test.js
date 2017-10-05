@@ -42,12 +42,12 @@ test('-------- Controller: GET /user/:id/contract/:idContract', (assert) => {
                 .post(urlPostUser)
                 .send(userCreditor)
                 .then((res) => {
-                    idUserCreditor = res.body._id;
+                    idUserCreditor = res.body._data._id;
                     request(app)
                         .post(urlLogin)
                         .send({email: userCreditor.email, pass: userCreditor.pass})
                         .then((res) => {
-                            token = res.body.token;
+                            token = res.body._data.token;
                             request(app)
                                 .post('/user/' + idUserCreditor + '/contract')
                                 .set('Authorization', 'Bearer ' + token)
@@ -59,16 +59,16 @@ test('-------- Controller: GET /user/:id/contract/:idContract', (assert) => {
                                 })
                                 .then((res) => {
                                     request(app)
-                                        .get('/user/' + idUserCreditor + '/contract/' + res.body._id)
+                                        .get('/user/' + idUserCreditor + '/contract/' + res.body._data._id)
                                         .set('Authorization', 'Bearer ' + token)
                                         .expect(statusCodeExpected)
                                         .then((res) => {
                                             assert.pass(messageExpectedStatusCode);
-                                            assert.equal(res.body.concept, contract.concept, messageExpectedConcept);
-                                            assert.equal(res.body.payment, contract.payment, messageExpectedPayment);
-                                            assert.equal(res.body.status, contract.status, messageStatusContractExpected);
-                                            assert.equal(res.body.creditor.email, userCreditor.email, messageExpectedCreditorEmail);
-                                            assert.equal(res.body.debtor.email, userDebtor.email, messageExpectedDebtorEmail);
+                                            assert.equal(res.body._data.concept, contract.concept, messageExpectedConcept);
+                                            assert.equal(res.body._data.payment, contract.payment, messageExpectedPayment);
+                                            assert.equal(res.body._data.status, contract.status, messageStatusContractExpected);
+                                            assert.equal(res.body._data.creditor.email, userCreditor.email, messageExpectedCreditorEmail);
+                                            assert.equal(res.body._data.debtor.email, userDebtor.email, messageExpectedDebtorEmail);
                                             assert.end();
                                         }, (err) => {
                                             assert.fail(err.message);
@@ -125,19 +125,19 @@ test('-------- Controller: GET /user/:id/contract/:idContract (forbidden access)
                 .post(urlPostUser)
                 .send(userCreditor)
                 .then((res) => {
-                    idUserCreditor = res.body._id;
+                    idUserCreditor = res.body._data._id;
                     request(app)
                         .post(urlPostUser)
                         .send(userAnotherCreditor)
                         .then((res) => {
-                            idUserAnotherCreditor = res.body._id;
+                            idUserAnotherCreditor = res.body._data._id;
                             request(app)
                                 .post(urlLogin)
                                 .send({email: userCreditor.email, pass: userCreditor.pass})
                                 .then((res) => {
                                     request(app)
                                         .post('/user/' + idUserCreditor + '/contract')
-                                        .set('Authorization', 'Bearer ' + res.body.token)
+                                        .set('Authorization', 'Bearer ' + res.body._data.token)
                                         .send({
                                             concept: 'We bet that I didn\'t eat a 2kg hamburger in less than 10 minutes',
                                             creditor: userCreditor.email,
@@ -145,7 +145,7 @@ test('-------- Controller: GET /user/:id/contract/:idContract (forbidden access)
                                             payment: 'Another 2kg hamburger with chips and beer'
                                         })
                                         .then((res) => {
-                                            idContract = res.body._id;
+                                            idContract = res.body._data._id;
                                             request(app)
                                                 .post(urlLogin)
                                                 .send({
@@ -155,7 +155,7 @@ test('-------- Controller: GET /user/:id/contract/:idContract (forbidden access)
                                                 .then((res) => {
                                                     request(app)
                                                         .get('/user/' + idUserAnotherCreditor + '/contract/' + idContract)
-                                                        .set('Authorization', 'Bearer ' + res.body.token)
+                                                        .set('Authorization', 'Bearer ' + res.body._data.token)
                                                         .expect(statusCodeExpected)
                                                         .then(() => {
                                                             assert.pass(messageExpectedStatusCode);
@@ -217,14 +217,14 @@ test('-------- Controller: GET /user/:id/contract/:idContract (unauthorized acce
                 .post(urlPostUser)
                 .send(userCreditor)
                 .then((res) => {
-                    idUserCreditor = res.body._id;
+                    idUserCreditor = res.body._data._id;
                     request(app)
                         .post(urlLogin)
                         .send({email: userCreditor.email, pass: userCreditor.pass})
                         .then((res) => {
                             request(app)
                                 .post('/user/' + idUserCreditor + '/contract')
-                                .set('Authorization', 'Bearer ' + res.body.token)
+                                .set('Authorization', 'Bearer ' + res.body._data.token)
                                 .send({
                                     concept: 'We bet that I didn\'t eat a 2kg hamburger in less than 10 minutes',
                                     creditor: userCreditor.email,
@@ -233,7 +233,7 @@ test('-------- Controller: GET /user/:id/contract/:idContract (unauthorized acce
                                 })
                                 .then((res) => {
                                     request(app)
-                                        .get('/user/' + idUserCreditor + '/contract/' + res.body._id)
+                                        .get('/user/' + idUserCreditor + '/contract/' + res.body._data._id)
                                         .set('Authorization', 'Bearer ')
                                         .expect(statusCodeExpected)
                                         .then(() => {

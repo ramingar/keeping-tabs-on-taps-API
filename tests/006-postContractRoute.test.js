@@ -38,14 +38,14 @@ test('-------- Controller: POST /contract', (assert) => {
                 .post(urlPostUser)
                 .send(userCreditor)
                 .then((res) => {
-                    idUserCreditor = res.body._id;
+                    idUserCreditor = res.body._data._id;
                     request(app)
                         .post(urlLogin)
                         .send({email: userCreditor.email, pass: userCreditor.pass})
                         .then((res) => {
                             request(app)
                                 .post('/user/' + idUserCreditor + '/contract')
-                                .set('Authorization', 'Bearer ' + res.body.token)
+                                .set('Authorization', 'Bearer ' + res.body._data.token)
                                 .send({
                                     concept: contract.concept,
                                     creditor: userCreditor.email,
@@ -55,9 +55,9 @@ test('-------- Controller: POST /contract', (assert) => {
                                 .expect(statusCodeExpected)
                                 .then((res) => {
                                     assert.pass(messageExpectedStatusCode);
-                                    assert.equal(res.body.payment, contract.payment, messageExpectedPayment);
-                                    assert.equal(res.body.concept, contract.concept, messageExpectedConcept);
-                                    assert.equal(res.body.status, contract.status, messageStatusContractExpected);
+                                    assert.equal(res.body._data.payment, contract.payment, messageExpectedPayment);
+                                    assert.equal(res.body._data.concept, contract.concept, messageExpectedConcept);
+                                    assert.equal(res.body._data.status, contract.status, messageStatusContractExpected);
                                     assert.end();
                                 }, (err) => {
                                     assert.fail(err.message);
@@ -91,14 +91,14 @@ test('-------- Controller: POST /contract (422 - userDebtor doesn\'t exist)', (a
         .post(urlPostUser)
         .send(userCreditor)
         .then((res) => {
-            idUserCreditor = res.body._id;
+            idUserCreditor = res.body._data._id;
             request(app)
                 .post(urlLogin)
                 .send({email: userCreditor.email, pass: userCreditor.pass})
                 .then((res) => {
                     request(app)
                         .post('/user/' + idUserCreditor + '/contract')
-                        .set('Authorization', 'Bearer ' + res.body.token)
+                        .set('Authorization', 'Bearer ' + res.body._data.token)
                         .send({
                             concept: '-----------',
                             creditor: userCreditor.email,
@@ -157,7 +157,7 @@ test('-------- Controller: POST /contract (403 - it is forbidden to create a con
                         .then((res) => {
                             request(app)
                                 .post('/user/' + idUserCreditor + '/contract')
-                                .set('Authorization', 'Bearer ' + res.body.token)
+                                .set('Authorization', 'Bearer ' + res.body._data.token)
                                 .send({
                                     concept: '-----------',
                                     creditor: 'blablablabla',

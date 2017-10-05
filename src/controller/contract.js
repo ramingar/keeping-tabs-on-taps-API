@@ -3,7 +3,7 @@ import Contract from '../model/contract';
 import User from '../model/user';
 import {errorHandler, mongooseErrorsCode} from '../utils/errors';
 import {amICreditorOrDebtor} from "../middleware/validations";
-import responses from "../utils/responses";
+import {buildResponse, codeMessages, setLinks} from "../utils/responses";
 import mongoosePaginateOptions from "../utils/mongoosePaginateOptions";
 
 const postContract = (req, res) => {
@@ -14,7 +14,7 @@ const postContract = (req, res) => {
 
     User.find({email: req.body.creditor}).then((responseCreditor) => {
         if (0 === responseCreditor.length) {
-            const err = {message: responses[422] + '. Creditor doesn\'t exist'};
+            const err = {message: codeMessages[422] + '. Creditor doesn\'t exist'};
             return res.status(422).json(errorHandler(err));
         }
 
@@ -22,7 +22,7 @@ const postContract = (req, res) => {
 
         User.find({email: req.body.debtor}).then((responseDebtor) => {
             if (0 === responseDebtor.length) {
-                const err = {message: responses[422] + '. Debtor doesn\'t exist'};
+                const err = {message: codeMessages[422] + '. Debtor doesn\'t exist'};
                 return res.status(422).json(errorHandler(err));
             }
 
@@ -53,7 +53,7 @@ const postContract = (req, res) => {
                         console.log(err);
                     });
 
-                    res.status(201).json(finalResponse);
+                    res.status(201).json(setLinks(req, buildResponse(finalResponse)));
 
                 }, (err) => {
                     res.status(err.status || 500).json(errorHandler(err));
@@ -84,7 +84,7 @@ const getContract = (req, res) => {
         .then((response) => {
 
             if (!amICreditorOrDebtor(response, req.params.id)) {
-                return res.status(403).json({"message": responses[403]});
+                return res.status(403).json({"message": codeMessages[403]});
             }
 
             // Don't send creditor's and debtor's id
@@ -93,7 +93,7 @@ const getContract = (req, res) => {
             const debtor = Object.assign({}, {email: debtorId.email, name: debtorId.name});
             const contract = {_id, creditor, debtor, created, concept, payment, status};
 
-            res.status(200).json(contract);
+            res.status(200).json(setLinks(req, buildResponse(contract)));
 
         }, (err) => {
             res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
@@ -110,7 +110,7 @@ const getContractsByCreditor = (req, res) => {
 
     Contract.paginate(query, options).then((response) => {
 
-        res.status(200).json(response);
+        res.status(200).json(setLinks(req, buildResponse(response)));
 
     }, (err) => {
         res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
