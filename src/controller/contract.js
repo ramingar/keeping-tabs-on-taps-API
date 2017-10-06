@@ -117,4 +117,21 @@ const getContractsByCreditor = (req, res) => {
     });
 };
 
-export {postContract, getContract, getContractsByCreditor};
+const getContractsByDebtor = (req, res) => {
+    const ObjectId = Types.ObjectId;
+    const debtorId = ObjectId(req.params.id);
+
+    const query = {debtorId};
+    const options = mongoosePaginateOptions(req);
+    options.select = '_id created concept payment status';
+
+    Contract.paginate(query, options).then((response) => {
+
+        res.status(200).json(setLinks(req, buildResponse(response)));
+
+    }, (err) => {
+        res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
+    });
+};
+
+export {postContract, getContract, getContractsByCreditor, getContractsByDebtor};

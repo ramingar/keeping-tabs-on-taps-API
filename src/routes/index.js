@@ -1,7 +1,7 @@
 import {Router} from 'express';
 import {index} from '../controller';
 import {login, logout, postUser, getUserById} from '../controller/user';
-import {postContract, getContract, getContractsByCreditor} from "../controller/contract";
+import {postContract, getContract, getContractsByCreditor, getContractsByDebtor} from "../controller/contract";
 import {authenticate, getMe} from '../middleware/auth';
 import {ownership, isRevoked, creditorIsMe} from '../middleware/validations';
 
@@ -53,6 +53,13 @@ export default (config) => {
         (req, res, next) => isRevoked(req, res, next),
         (req, res, next) => ownership(req, res, config, next),
         (req, res) => getContractsByCreditor(req, res)
+    );
+
+    routes.get('/user/:id/contract-as-debtor',
+        authenticate(config),
+        (req, res, next) => isRevoked(req, res, next),
+        (req, res, next) => ownership(req, res, config, next),
+        (req, res) => getContractsByDebtor(req, res)
     );
 
     return routes;
