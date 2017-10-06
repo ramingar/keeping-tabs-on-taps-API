@@ -38,6 +38,16 @@ const buildResponse = (response) => {
     return newResponse;
 };
 
+const getRestOfQuery = (query) => {
+    let restOfQuerystring = '';
+    Object.keys(query).forEach(function (key) {
+        if ('page' !== key && 'limit' !== key) {
+            restOfQuerystring += `&${key}=${query[key]}`;
+        }
+    });
+    return restOfQuerystring;
+};
+
 const setNextAndPrevious = (request, response) => {
     if (response._result.page === 1 && response._result.page >= response._result.pages) return;
 
@@ -47,8 +57,8 @@ const setNextAndPrevious = (request, response) => {
     const queryLimit = request.query.limit || paginate.options.limit;
     const queryPage = request.query.page || paginate.options.page;
 
-    const next = `${urlWithoutQuery}?page=${Number.parseInt(queryPage) + 1}&limit=${queryLimit}`;
-    const previous = `${urlWithoutQuery}?page=${Number.parseInt(queryPage) - 1}&limit=${queryLimit}`;
+    const next = `${urlWithoutQuery}?page=${Number.parseInt(queryPage) + 1}&limit=${queryLimit}${getRestOfQuery(request.query)}`;
+    const previous = `${urlWithoutQuery}?page=${Number.parseInt(queryPage) - 1}&limit=${queryLimit}${getRestOfQuery(request.query)}`;
 
     if (response._result.page === 1) {
         page.next = next;
