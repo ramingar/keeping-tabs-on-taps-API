@@ -77,13 +77,14 @@ test('-------- Util setLinks()', (assert) => {
     const message = 'Response expected must match with the actual response';
 
     const request = {
-        'url': '/user/1111/contract?page=2&limit=1',
+        'url': '/user/1111/contract?page=2&limit=1&status=waiting',
         'user': {
             'id': '1111'
         },
         'query': {
             'page': 2,
-            'limit': 1
+            'limit': 1,
+            'status': 'waiting'
         }
     };
 
@@ -111,8 +112,8 @@ test('-------- Util setLinks()', (assert) => {
             'user': '/user/1111',
             'contractsAsCreditor': '/user/1111/contract',
             'page': {
-                'next': '/user/1111/contract?page=3&limit=1',
-                'previous': '/user/1111/contract?page=1&limit=1'
+                'next': '/user/1111/contract?page=3&limit=1&status=waiting',
+                'previous': '/user/1111/contract?page=1&limit=1&status=waiting'
             }
         },
         '_result': {

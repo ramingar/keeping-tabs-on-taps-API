@@ -1,6 +1,6 @@
 {
   "name": "keeping-tabs-on-taps-API",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "description": "An awesome counter for your beers debt",
   "main": "./dist/index.js",
   "scripts": {
