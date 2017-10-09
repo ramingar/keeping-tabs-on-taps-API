@@ -111,6 +111,7 @@ test('-------- Util setLinks()', (assert) => {
             'logout': '/logout',
             'user': '/user/1111',
             'contractsAsCreditor': '/user/1111/contract',
+            'contractsAsDebtor': '/user/1111/contract-as-debtor',
             'page': {
                 'next': '/user/1111/contract?page=3&limit=1&status=waiting',
                 'previous': '/user/1111/contract?page=1&limit=1&status=waiting'
