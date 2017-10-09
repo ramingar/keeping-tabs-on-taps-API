@@ -1,7 +1,10 @@
 import {Router} from 'express';
 import {index} from '../controller';
 import {login, logout, postUser, getUserById} from '../controller/user';
-import {postContract, getContract, getContractsByCreditor, getContractsByDebtor} from "../controller/contract";
+import {
+    postContract, getContract, getContractsByCreditor, getContractsByDebtor,
+    changeContractStatus
+} from "../controller/contract";
 import {authenticate, getMe} from '../middleware/auth';
 import {ownership, isRevoked, creditorIsMe} from '../middleware/validations';
 
@@ -60,6 +63,13 @@ export default (config) => {
         isRevoked,
         (req, res, next) => ownership(req, res, config, next),
         getContractsByDebtor
+    );
+
+    routes.patch('/user/:id/contract/:idContract',
+        authenticate(config),
+        isRevoked,
+        (req, res, next) => ownership(req, res, config, next),
+        changeContractStatus
     );
 
     return routes;
