@@ -3,6 +3,7 @@ import Contract from '../model/contract';
 import User from '../model/user';
 import {errorHandler, mongooseErrorsCode} from '../utils/errors';
 import {amICreditorOrDebtor} from "../middleware/validations";
+import {isValidNewStatus, isValidRequester} from "../utils/validations";
 import {buildResponse, codeMessages, setLinks} from "../utils/responses";
 import mongoosePaginateOptions from "../utils/mongoosePaginateOptions";
 
@@ -67,6 +68,43 @@ const postContract = (req, res) => {
         res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
     });
 
+};
+
+const changeContractStatus = (req, res) => {
+    Contract.findById(req.params.idContract).then(contract => {
+
+        const newStatus = req.body.status;
+        const currentStatus = contract.status;
+        const userRequester = req.params.id;
+        const userTypeRequester = contract.creditorId.toString() === userRequester ?
+            'creditor' :
+            contract.debtorId.toString() === userRequester ? 'debtor' : 'unknown';
+
+        if (!isValidNewStatus(newStatus, currentStatus)) {
+            return res.status(400).json({
+                message: codeMessages[400] +
+                `. You can't change status to ${newStatus} if current status is ${currentStatus}.`
+            });
+        }
+
+        if (!isValidRequester(userTypeRequester, newStatus)) {
+            return res.status(400).json({
+                message: codeMessages[400] +
+                `. Only a creditor can change status to 'cleared' and only a debtor to 'accepted'.`
+            });
+        }
+
+        contract.status = newStatus;
+
+        contract.save().then(contract => {
+            res.status(200).json(setLinks(req, buildResponse(contract)));
+        }, err => {
+            res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
+        });
+
+    }, err => {
+        res.status(err.status || mongooseErrorsCode[err.name] || 500).json(errorHandler(err));
+    });
 };
 
 const getContract = (req, res) => {
@@ -134,4 +172,4 @@ const getContractsByDebtor = (req, res) => {
     });
 };
 
-export {postContract, getContract, getContractsByCreditor, getContractsByDebtor};
+export {postContract, changeContractStatus, getContract, getContractsByCreditor, getContractsByDebtor};

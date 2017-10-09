@@ -83,6 +83,7 @@ const setLinks = (req, res) => {
         _links.id = '/me';
         _links.user = '/user/' + req.user.id;
         _links.contractsAsCreditor = '/user/' + req.user.id + '/contract';
+        _links.contractsAsDebtor = '/user/' + req.user.id + '/contract-as-debtor';
     }
 
     if (res._result) {
