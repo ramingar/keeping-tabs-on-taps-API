@@ -1,4 +1,5 @@
 # Keeping tabs on taps
+[![Build Status](https://travis-ci.org/ramingar/keeping-tabs-on-taps-API.svg?branch=master)](https://travis-ci.org/ramingar/keeping-tabs-on-taps-API)
 
 The goal for this application is keep an eye of every beer debts (or every debts in general) you owe or someone owes you.
 This project serves an API REST HATEOAS powered by Node, ExpressJS and MongoDB. TravisCI is in charge for the Continuous
